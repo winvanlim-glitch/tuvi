@@ -14,7 +14,6 @@ export interface LunarDate {
     chiMonth: string;
     canDay: string;
     chiDay: string;
-    isLeap: boolean;
 }
 
 /**
@@ -42,7 +41,7 @@ export const convertSolarToLunar = (day: number, month: number, year: number): L
         chiMonth: '',
         canDay: '',
         chiDay: '',
-        isLeap: lunar.isLeap
+        // isLeap thông tin không cần dùng trong bản hiện tại
     };
 };
 

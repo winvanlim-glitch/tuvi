@@ -36,9 +36,9 @@ export const spring = {
 // ============================================
 
 export const easing = {
-    easeOut: [0.22, 1, 0.36, 1],
-    easeInOut: [0.43, 0.13, 0.23, 0.96],
-    anticipate: [0.68, -0.55, 0.265, 1.55]
+    easeOut: 'easeOut',
+    easeInOut: 'easeInOut',
+    anticipate: 'anticipate'
 };
 
 // ============================================
@@ -49,7 +49,7 @@ export const fadeIn: Variants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: { duration: 0.5, ease: easing.easeOut }
+        transition: { duration: 0.5 }
     }
 };
 
@@ -163,8 +163,7 @@ export const iconBounce: Variants = {
         transition: {
             scale: spring.bouncy,
             rotate: {
-                duration: 0.5,
-                ease: easing.anticipate
+                duration: 0.5
             }
         }
     }
@@ -177,7 +176,7 @@ export const iconPulse: Variants = {
         transition: {
             duration: 0.6,
             repeat: Infinity,
-            ease: easing.easeInOut
+            repeatType: 'loop'
         }
     }
 };
@@ -187,8 +186,7 @@ export const iconSpin: Variants = {
     hover: {
         rotate: 360,
         transition: {
-            duration: 0.8,
-            ease: 'linear'
+            duration: 0.8
         }
     }
 };
@@ -256,7 +254,7 @@ export const floatingAnimation: Variants = {
         transition: {
             duration: 4,
             repeat: Infinity,
-            ease: 'easeInOut'
+            repeatType: 'mirror'
         }
     }
 };
@@ -268,7 +266,7 @@ export const glowPulse: Variants = {
         transition: {
             duration: 1.5,
             repeat: Infinity,
-            ease: 'easeInOut'
+            repeatType: 'mirror'
         }
     }
 };
@@ -283,16 +281,14 @@ export const pageTransition: Variants = {
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.5,
-            ease: easing.easeOut
+            duration: 0.5
         }
     },
     exit: {
         opacity: 0,
         y: -20,
         transition: {
-            duration: 0.3,
-            ease: easing.easeOut
+            duration: 0.3
         }
     }
 };
