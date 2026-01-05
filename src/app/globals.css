@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-noto-sans), sans-serif;
+
+  --color-primary: #36e27b;
+  --color-background-dark: #111714;
+  --color-surface-dark: #1c2420;
+  --color-text-secondary: #8a9b93;
+}
+
+@layer base {
+  :root {
+    --background: var(--color-background-dark);
+    --foreground: 0 0% 98%;
+  }
+
+  body {
+    background-color: var(--color-background-dark);
+    color: white;
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d3732;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #36e27b;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2d3732 transparent;
+}
