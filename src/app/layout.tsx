@@ -5,37 +5,37 @@ import './globals.css';
 const notoSans = localFont({
     src: [
         {
-            path: '../../public/fonts/NotoSans-Thin.ttf',
+            path: '../assets/fonts/NotoSans-Thin.ttf',
             weight: '100',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-Regular.ttf',
+            path: '../assets/fonts/NotoSans-Regular.ttf',
             weight: '400',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-Medium.ttf',
+            path: '../assets/fonts/NotoSans-Medium.ttf',
             weight: '500',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-SemiBold.ttf',
+            path: '../assets/fonts/NotoSans-SemiBold.ttf',
             weight: '600',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-Bold.ttf',
+            path: '../assets/fonts/NotoSans-Bold.ttf',
             weight: '700',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-Black.ttf',
+            path: '../assets/fonts/NotoSans-Black.ttf',
             weight: '900',
             style: 'normal',
         },
         {
-            path: '../../public/fonts/NotoSans-Italic.ttf',
+            path: '../assets/fonts/NotoSans-Italic.ttf',
             weight: '400',
             style: 'italic',
         },

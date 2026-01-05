@@ -1,4 +1,4 @@
-import TarotPage from '@/pages/TarotPage';
+import TarotPage from '@/components/pages/TarotPage';
 
 export const metadata = {
     title: 'Bói Tarot - Astrology VN',

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Hero from '@/components/features/Hero';
 import ZodiacGrid from '@/components/features/ZodiacGrid';
 import DailyInsights from '@/components/features/DailyInsights';
-import AstrologyBlog from '@/pages/AstrologyBlog';
+import AstrologyBlog from '@/components/pages/AstrologyBlog';
 import SearchBar from '@/components/features/SearchBar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -1,4 +1,4 @@
-import ChartPage from '@/pages/ChartPage';
+import ChartPage from '@/components/pages/ChartPage';
 
 export const metadata = {
     title: 'Lá Số Tử Vi - Astrology VN',

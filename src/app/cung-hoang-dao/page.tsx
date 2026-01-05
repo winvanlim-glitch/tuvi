@@ -1,6 +1,6 @@
 'use client';
 
-import SignsPage from '@/pages/SignsPage';
+import SignsPage from '@/components/pages/SignsPage';
 
 export default function Page() {
     return (
