@@ -7,18 +7,6 @@ interface BirthTimePickerProps {
 }
 
 const BirthTimePicker: React.FC<BirthTimePickerProps> = ({ value, onChange }) => {
-    // Generate hours 0-23
-    const hours = Array.from({ length: 24 }, (_, i) => ({
-        value: i.toString().padStart(2, '0'),
-        label: i.toString().padStart(2, '0')
-    }));
-
-    // Generate minutes 0-59
-    const minutes = Array.from({ length: 60 }, (_, i) => ({
-        value: i.toString().padStart(2, '0'),
-        label: i.toString().padStart(2, '0')
-    }));
-
     const [hour, setHour] = useState<string>('00');
     const [minute, setMinute] = useState<string>('00');
 
@@ -30,31 +18,42 @@ const BirthTimePicker: React.FC<BirthTimePickerProps> = ({ value, onChange }) =>
         }
     }, [value]);
 
-    const handleChange = (type: 'hour' | 'minute', val: string) => {
-        let newHour = type === 'hour' ? val : hour;
-        let newMinute = type === 'minute' ? val : minute;
-
-        if (type === 'hour') setHour(val);
-        if (type === 'minute') setMinute(val);
-
-        onChange(`${newHour}:${newMinute}`);
+    const handleHourChange = (newHour: string) => {
+        setHour(newHour);
+        onChange(`${newHour}:${minute}`);
     };
 
+    const handleMinuteChange = (newMinute: string) => {
+        setMinute(newMinute);
+        onChange(`${hour}:${newMinute}`);
+    };
+
+    // Generate options
+    const hourOptions = Array.from({ length: 24 }, (_, i) => ({
+        value: i.toString().padStart(2, '0'),
+        label: `${i.toString().padStart(2, '0')} giờ`
+    }));
+
+    const minuteOptions = Array.from({ length: 60 }, (_, i) => ({
+        value: i.toString().padStart(2, '0'),
+        label: `${i.toString().padStart(2, '0')} phút`
+    }));
+
     return (
-        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 relative z-10">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             <CustomSelect
                 label="GIỜ"
-                placeholder="--"
-                options={hours}
                 value={hour}
-                onChange={(val) => handleChange('hour', val)}
+                options={hourOptions}
+                onChange={handleHourChange}
+                placeholder="Chọn giờ"
             />
             <CustomSelect
                 label="PHÚT"
-                placeholder="--"
-                options={minutes}
                 value={minute}
-                onChange={(val) => handleChange('minute', val)}
+                options={minuteOptions}
+                onChange={handleMinuteChange}
+                placeholder="Chọn phút"
             />
         </div>
     );
