@@ -20,17 +20,17 @@ const PalaceCard: React.FC<PalaceCardProps> = ({ palace, content, index, onClick
                 stiffness: 200,
                 damping: 20
             }}
-            className="glass rounded-[40px] p-8 border border-white/10 relative group hover:border-primary/30 transition-all bg-gradient-to-b from-white/5 to-transparent cursor-pointer"
+            className="glass rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/10 relative group hover:border-primary/30 transition-all bg-gradient-to-b from-white/5 to-transparent cursor-pointer"
             whileHover={{
-                y: -8,
-                boxShadow: '0 25px 50px -12px rgba(54, 226, 123, 0.25)'
+                y: -6,
+                boxShadow: '0 20px 40px -12px rgba(54, 226, 123, 0.25)'
             }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
         >
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5 lg:mb-6">
                 <motion.div
-                    className="size-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary"
+                    className="size-10 sm:size-12 lg:size-14 rounded-xl sm:rounded-2xl bg-primary/20 flex items-center justify-center text-primary"
                     whileHover={{
                         scale: 1.1,
                         rotate: [0, -5, 5, 0],
@@ -42,22 +42,22 @@ const PalaceCard: React.FC<PalaceCardProps> = ({ palace, content, index, onClick
                         backgroundColor: { duration: 0.3 }
                     }}
                 >
-                    <span className="material-symbols-outlined text-3xl">{palace.icon}</span>
+                    <span className="material-symbols-outlined text-xl sm:text-2xl lg:text-3xl">{palace.icon}</span>
                 </motion.div>
                 <div>
-                    <motion.h4
-                        className="text-2xl font-bold"
+                    <motion.h3
+                        className="text-lg sm:text-xl lg:text-2xl font-bold"
                         whileHover={{ color: 'rgba(54, 226, 123, 1)' }}
                         transition={{ duration: 0.2 }}
                     >
                         {palace.name}
-                    </motion.h4>
+                    </motion.h3>
                     <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold opacity-70">Cung quan trọng</p>
                 </div>
             </div>
 
             <motion.p
-                className="text-text-secondary leading-relaxed text-base min-h-[4.5rem]"
+                className="text-text-secondary leading-relaxed text-sm sm:text-base min-h-[3.5rem] sm:min-h-[4rem] lg:min-h-[4.5rem]"
                 initial={{ opacity: 0.8 }}
                 whileHover={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
@@ -66,13 +66,13 @@ const PalaceCard: React.FC<PalaceCardProps> = ({ palace, content, index, onClick
             </motion.p>
 
             <motion.div
-                className="mt-6 flex items-center gap-2 text-primary text-sm font-bold cursor-pointer group/link"
+                className="mt-4 sm:mt-5 lg:mt-6 flex items-center gap-1.5 sm:gap-2 text-primary text-xs sm:text-sm font-bold cursor-pointer group/link"
                 whileHover={{ x: 4 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
                 <span>Xem chi tiết</span>
                 <motion.span
-                    className="material-symbols-outlined text-base"
+                    className="material-symbols-outlined text-sm sm:text-base"
                     animate={{ x: [0, 4, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -82,7 +82,7 @@ const PalaceCard: React.FC<PalaceCardProps> = ({ palace, content, index, onClick
 
             {/* Animated border glow */}
             <motion.div
-                className="absolute inset-0 border-2 border-primary/0 rounded-[40px] pointer-events-none"
+                className="absolute inset-0 border-2 border-primary/0 rounded-xl sm:rounded-2xl lg:rounded-3xl pointer-events-none"
                 whileHover={{
                     borderColor: 'rgba(54, 226, 123, 0.3)',
                     boxShadow: '0 0 20px rgba(54, 226, 123, 0.2)'

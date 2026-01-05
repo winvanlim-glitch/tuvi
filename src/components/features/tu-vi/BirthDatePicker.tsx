@@ -42,23 +42,23 @@ const BirthDatePicker: React.FC<BirthDatePickerProps> = ({ value, onChange }) =>
     };
 
     return (
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 relative z-20">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 relative z-30">
             <CustomSelect
-                label="Ngày"
+                label="NGÀY"
                 placeholder="--"
                 options={days}
                 value={day}
                 onChange={(val) => handleChange('day', val)}
             />
             <CustomSelect
-                label="Tháng"
+                label="THÁNG"
                 placeholder="--"
                 options={months}
                 value={month}
                 onChange={(val) => handleChange('month', val)}
             />
             <CustomSelect
-                label="Năm"
+                label="NĂM"
                 placeholder="--"
                 options={years}
                 value={year}

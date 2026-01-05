@@ -35,7 +35,7 @@ export function useFormState(initialData: Partial<FormData> = {}) {
     };
 
     const isValid = () => {
-        return formData.fullName.trim() !== '' && formData.dob !== '';
+        return formData.fullName.trim() !== '' && formData.dob !== '' && formData.tob !== '';
     };
 
     return {

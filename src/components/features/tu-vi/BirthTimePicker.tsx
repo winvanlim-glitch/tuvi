@@ -41,16 +41,16 @@ const BirthTimePicker: React.FC<BirthTimePickerProps> = ({ value, onChange }) =>
     };
 
     return (
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 relative z-20">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 relative z-10">
             <CustomSelect
-                label="Giờ"
+                label="GIỜ"
                 placeholder="--"
                 options={hours}
                 value={hour}
                 onChange={(val) => handleChange('hour', val)}
             />
             <CustomSelect
-                label="Phút"
+                label="PHÚT"
                 placeholder="--"
                 options={minutes}
                 value={minute}

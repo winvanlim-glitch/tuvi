@@ -47,35 +47,35 @@ const ZodiacGrid: React.FC = () => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+      className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4"
     >
       {signs.map((sign) => (
         <motion.div
           key={sign.id}
           variants={item}
-          whileHover={{ y: -8, scale: 1.02 }}
+          whileHover={{ y: -6, scale: 1.02 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setSelectedId(sign.id)}
-          className={`cursor-pointer rounded-[32px] p-4 flex flex-col items-center gap-3 transition-all duration-300 border ${selectedId === sign.id
-              ? 'bg-surface-dark border-primary/50 shadow-2xl'
+          className={`cursor-pointer rounded-xl sm:rounded-2xl lg:rounded-3xl p-2.5 sm:p-3 lg:p-4 flex flex-col items-center gap-2 sm:gap-2.5 lg:gap-3 transition-all duration-300 border ${selectedId === sign.id
+              ? 'bg-surface-dark border-primary/50 shadow-xl'
               : 'bg-surface-dark/40 border-white/5 hover:border-white/20'
             }`}
           style={{
-            boxShadow: selectedId === sign.id ? `0 20px 40px ${sign.color}20` : 'none'
+            boxShadow: selectedId === sign.id ? `0 15px 30px ${sign.color}20` : 'none'
           }}
         >
           <div
-            className={`size-14 lg:size-16 rounded-full flex items-center justify-center transition-all duration-500`}
+            className={`size-10 sm:size-12 lg:size-14 xl:size-16 rounded-full flex items-center justify-center transition-all duration-500`}
             style={{
               backgroundColor: selectedId === sign.id ? sign.color : 'rgba(17, 23, 20, 1)',
               color: selectedId === sign.id ? '#111714' : 'rgba(255, 255, 255, 0.4)',
-              boxShadow: selectedId === sign.id ? `0 0 20px ${sign.color}40` : 'none'
+              boxShadow: selectedId === sign.id ? `0 0 15px ${sign.color}40` : 'none'
             }}
           >
-            <span className="material-symbols-outlined text-3xl">{sign.icon}</span>
+            <span className="material-symbols-outlined text-xl sm:text-2xl lg:text-3xl">{sign.icon}</span>
           </div>
           <span
-            className={`text-xs lg:text-sm font-bold text-center transition-colors`}
+            className={`text-[10px] sm:text-xs lg:text-sm font-bold text-center transition-colors`}
             style={{ color: selectedId === sign.id ? sign.color : '#9eb7a8' }}
           >
             {sign.name}

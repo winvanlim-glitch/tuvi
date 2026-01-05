@@ -47,19 +47,19 @@ const Sidebar: React.FC = () => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="flex flex-col glass rounded-[40px] border border-white/5 p-6 shadow-2xl"
+      className="flex flex-col glass rounded-2xl lg:rounded-3xl border border-white/5 p-4 sm:p-5 lg:p-6 shadow-xl"
     >
-      <div className="flex items-center gap-3 px-4 mb-10 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 lg:px-4 mb-6 sm:mb-8 lg:mb-10 shrink-0">
         <motion.div
           initial={{ rotate: -180, scale: 0 }}
           animate={{ rotate: 0, scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-          className="size-12 rounded-2xl bg-primary flex items-center justify-center text-background-dark shadow-lg shadow-primary/20"
+          className="size-10 sm:size-11 lg:size-12 rounded-xl sm:rounded-2xl bg-primary flex items-center justify-center text-background-dark shadow-lg shadow-primary/20"
         >
-          <span className="material-symbols-outlined text-3xl">flare</span>
+          <span className="material-symbols-outlined text-2xl sm:text-2xl lg:text-3xl">flare</span>
         </motion.div>
         <div>
-          <h1 className="text-xl font-bold tracking-tighter leading-none">Astrology</h1>
+          <h1 className="text-lg sm:text-xl font-bold tracking-tighter leading-none">Tử Vi</h1>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Vietnam</span>
         </div>
       </div>
@@ -68,7 +68,8 @@ const Sidebar: React.FC = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="space-y-2 mb-10"
+        className="space-y-2.5 sm:space-y-3.5 mb-6 sm:mb-8 lg:mb-10"
+        aria-label="Main navigation"
       >
         {menuItems.map((item) => {
           const active = isActive(item.href);
@@ -80,16 +81,16 @@ const Sidebar: React.FC = () => {
             >
               <motion.div
                 variants={itemVariants}
-                className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all relative group ${active
+                className={`w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl transition-all relative group ${active
                   ? 'bg-primary/10 text-primary'
                   : 'text-text-secondary hover:bg-white/5 hover:text-white'
                   }`}
               >
-                <span className={`material-symbols-outlined transition-transform duration-300 group-hover:scale-110 ${active ? 'fill-1' : ''
+                <span className={`material-symbols-outlined text-lg sm:text-xl transition-transform duration-300 group-hover:scale-110 ${active ? 'fill-1' : ''
                   }`}>
                   {item.icon}
                 </span>
-                <span className="font-bold text-sm tracking-wide">{item.label}</span>
+                <span className="font-bold text-xs sm:text-sm tracking-wide">{item.label}</span>
 
                 {active && (
                   <motion.div
@@ -110,15 +111,18 @@ const Sidebar: React.FC = () => {
         transition={{ delay: 1, duration: 0.6 }}
         className="shrink-0"
       >
-        <div className="p-4 bg-white/5 rounded-3xl border border-white/5">
-          <div className="flex items-center gap-3 mb-4">
-            <img src="https://picsum.photos/seed/pcuser/100/100" className="size-10 rounded-full border border-primary/30" alt="User" />
+        <div className="p-3 sm:p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl sm:rounded-3xl border border-primary/20">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <div className="size-8 sm:size-9 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">lightbulb</span>
+            </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate">An Nguyễn</p>
-              <p className="text-[10px] text-text-secondary uppercase">Thành viên Pro</p>
+              <p className="text-xs sm:text-sm font-bold mb-1">Mẹo nhanh</p>
+              <p className="text-[10px] sm:text-xs text-text-secondary leading-relaxed">
+                Khám phá lá số tử vi để hiểu rõ hơn về bản thân và vận mệnh của bạn
+              </p>
             </div>
           </div>
-          <button className="w-full text-[10px] font-bold text-primary uppercase tracking-widest hover:underline text-left">Nâng cấp tài khoản</button>
         </div>
       </motion.div>
     </motion.div>
