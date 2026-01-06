@@ -28,13 +28,13 @@ const RightSidebar: React.FC = () => {
                     transition={{ delay: 0.8, duration: 0.8 }}
                     className="bg-gradient-to-br from-primary/10 to-transparent rounded-3xl p-6 border border-primary/20 shadow-lg shadow-primary/5"
                 >
-                    <span className="text-[10px] font-bold uppercase text-primary tracking-widest">Gợi ý dành riêng</span>
-                    <h4 className="font-bold mt-2 mb-4">Bạn có 1 thông điệp mới từ vũ trụ</h4>
+                    <span className="text-[10px] font-bold uppercase text-primary tracking-widest">Gợi ý AI dành riêng</span>
+                    <h4 className="font-bold mt-2 mb-4">Trợ lý AI vừa tạo thông điệp cho bạn</h4>
                     <Link
                         href="/tu-vi"
                         className="block w-full text-center bg-primary text-background-dark font-black py-3 rounded-xl text-sm transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20"
                     >
-                        Giải mã ngay
+                        Giải mã bằng AI
                     </Link>
                 </motion.div>
 

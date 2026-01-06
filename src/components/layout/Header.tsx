@@ -9,7 +9,12 @@ const Header: React.FC = () => {
           <div className="size-8 sm:size-9 lg:size-10 rounded-full bg-surface-dark flex items-center justify-center text-primary shadow-lg shadow-primary/10">
             <span className="material-symbols-outlined text-lg sm:text-xl">auto_awesome</span>
           </div>
-          <h1 className="text-base sm:text-lg font-bold tracking-tight">Tử Vi VN</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-bold tracking-tight">Tử Vi VN</h1>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/15 text-primary border border-primary/30">
+              AI
+            </span>
+          </div>
         </div>
         
         <div className="flex items-center gap-2 sm:gap-3">

@@ -8,7 +8,6 @@ import Sidebar from '@/components/layout/Sidebar';
 import BottomNav from '@/components/layout/BottomNav';
 import SearchBar from '@/components/features/SearchBar';
 import RightSidebar from '@/components/layout/RightSidebar';
-import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const notoSans = localFont({
     src: [
@@ -88,8 +87,6 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${notoSans.variable} min-h-screen bg-background-dark font-display text-white selection:bg-primary/30 antialiased`}>
-                <LoadingOverlay duration={500} />
-                
                 {/* Mobile Header */}
                 <header className="lg:hidden">
                     <Header />

@@ -65,8 +65,7 @@ const InputForm: React.FC<InputFormProps> = ({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          Kết nối dữ liệu ngày giờ sinh với các vì sao để nhận bản phân tích vận
-          mệnh độc bản.
+          Kết nối dữ liệu ngày giờ sinh với engine AI để nhận bản luận giải vận mệnh cá nhân hóa, kèm hướng dẫn hành động rõ ràng.
         </motion.p>
       </div>
 

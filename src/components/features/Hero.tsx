@@ -25,7 +25,7 @@ const Hero: React.FC<HeroProps> = ({ onStartChart }) => {
           className="mb-3 sm:mb-4 lg:mb-5 bg-primary/20 border border-primary/30 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5 sm:gap-2"
         >
           <span className="material-symbols-outlined text-xs sm:text-sm">auto_awesome</span>
-          Năng lượng ngày hôm nay
+          Trợ lý tử vi AI
         </motion.div>
         
         <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.1] mb-3 sm:mb-4 lg:mb-5 tracking-tighter">
@@ -34,7 +34,7 @@ const Hero: React.FC<HeroProps> = ({ onStartChart }) => {
         </h1>
         
         <p className="text-text-secondary text-sm sm:text-base lg:text-lg mb-4 sm:mb-6 lg:mb-7 max-w-md leading-relaxed">
-          Phân tích các hành tinh, giải mã những tín hiệu từ vũ trụ để định hướng cuộc sống thịnh vượng hơn.
+          Phân tích bởi AI tiếng Việt: thu thập dữ liệu sinh, giải mã bản mệnh và gợi ý hành động rõ ràng để bạn định hướng cuộc sống thịnh vượng hơn.
         </p>
         
         <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4">

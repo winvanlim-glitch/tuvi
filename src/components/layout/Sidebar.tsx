@@ -119,7 +119,7 @@ const Sidebar: React.FC = () => {
             <div className="overflow-hidden">
               <p className="text-xs sm:text-sm font-bold mb-1">Mẹo nhanh</p>
               <p className="text-[10px] sm:text-xs text-text-secondary leading-relaxed">
-                Khám phá lá số tử vi để hiểu rõ hơn về bản thân và vận mệnh của bạn
+                Trải nghiệm trợ lý tử vi AI để luận giải lá số nhanh và cá nhân hóa hơn
               </p>
             </div>
           </div>

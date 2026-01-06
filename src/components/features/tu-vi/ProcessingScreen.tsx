@@ -7,15 +7,15 @@ interface ProcessingScreenProps {
 
 const ProcessingScreen: React.FC<ProcessingScreenProps> = ({ onComplete }) => {
     const [progress, setProgress] = useState(0);
-    const [status, setStatus] = useState('Đang kết nối thiên hà...');
+    const [status, setStatus] = useState('AI đang khởi động mô hình luận giải...');
 
     useEffect(() => {
         const messages = [
-            'Đang kết nối mạng lưới thiên hà...',
+            'AI đang kết nối mạng lưới thiên hà...',
             'Xác định vị trí các hành tinh tại thời điểm sinh...',
-            'Phân tích góc chiếu Nhật - Nguyệt...',
-            'Tính toán âm dương ngũ hành...',
-            'Hoàn tất bản đồ sao của bạn!'
+            'Phân tích góc chiếu Nhật - Nguyệt bằng mô hình AI...',
+            'Kết hợp âm dương ngũ hành với dữ liệu học máy...',
+            'Hoàn tất bản đồ sao và tạo insight cá nhân hóa!'
         ];
 
         const timer = setInterval(() => {
@@ -144,7 +144,7 @@ const ProcessingScreen: React.FC<ProcessingScreenProps> = ({ onComplete }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
             >
-                Hệ thống đang giải mã...
+                Hệ thống AI đang giải mã...
             </motion.h3>
 
             <motion.p

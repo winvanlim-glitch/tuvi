@@ -51,12 +51,12 @@ export const BREAKPOINTS = {
 } as const;
 
 export const SITE_CONFIG = {
-  name: 'Tử Vi VN',
-  title: 'Tử Vi VN - Tử vi & Cung hoàng đạo',
-  description: 'Khám phá bí ẩn vũ trụ và bản thân qua tử vi, cung hoàng đạo, tarot và chiêm tinh học',
+  name: 'Tử Vi VN AI',
+  title: 'Tử Vi VN AI - Trợ lý tử vi & cung hoàng đạo',
+  description: 'Trợ lý tử vi AI tiếng Việt: lập lá số, luận giải cung hoàng đạo, tarot và gợi ý cá nhân hóa dựa trên dữ liệu sinh.',
   url: 'https://tuvi-vn.com',
   ogImage: '/images/og-image.jpg',
-  keywords: 'tử vi, cung hoàng đạo, tarot, chiêm tinh, lá số tử vi, tử vi miễn phí, tử vi hàng ngày',
+  keywords: 'tử vi AI, trí tuệ nhân tạo, trợ lý tử vi, cung hoàng đạo AI, tarot AI, giải mã lá số AI, tử vi miễn phí, tử vi hàng ngày, astrology AI',
   locale: 'vi_VN',
   type: 'website',
 } as const;
