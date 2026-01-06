@@ -81,7 +81,7 @@ const Sidebar: React.FC = () => {
             >
               <motion.div
                 variants={itemVariants}
-                className={`w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl transition-all relative group ${active
+                className={`w-full flex items-center mt-1 gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl transition-all relative group ${active
                   ? 'bg-primary/10 text-primary'
                   : 'text-text-secondary hover:bg-white/5 hover:text-white'
                   }`}

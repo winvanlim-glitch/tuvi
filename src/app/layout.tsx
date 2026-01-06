@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import './material-symbols.css';
 import { generateMetadata as generateSEOMetadata, generateStructuredData } from '@/lib/seo';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import BottomNav from '@/components/layout/BottomNav';
 import SearchBar from '@/components/features/SearchBar';
 import RightSidebar from '@/components/layout/RightSidebar';
+import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const notoSans = localFont({
     src: [
@@ -65,17 +67,11 @@ export default function RootLayout({
         <html lang="vi">
             <head>
                 <link
-                    rel="preconnect"
-                    href="https://fonts.googleapis.com"
-                />
-                <link
-                    rel="preconnect"
-                    href="https://fonts.gstatic.com"
+                    rel="preload"
+                    href="/fonts/material-symbols/material-symbols-outlined.woff2"
+                    as="font"
+                    type="font/woff2"
                     crossOrigin="anonymous"
-                />
-                <link
-                    rel="stylesheet"
-                    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
                 />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="icon" href="/favicon.ico" />
@@ -92,6 +88,8 @@ export default function RootLayout({
                 />
             </head>
             <body className={`${notoSans.variable} min-h-screen bg-background-dark font-display text-white selection:bg-primary/30 antialiased`}>
+                <LoadingOverlay duration={500} />
+                
                 {/* Mobile Header */}
                 <header className="lg:hidden">
                     <Header />

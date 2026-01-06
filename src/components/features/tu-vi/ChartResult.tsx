@@ -16,7 +16,6 @@ interface ChartResultProps {
 
 const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
     const [selectedPalace, setSelectedPalace] = useState<PalaceDefinition | null>(null);
-    const [isHighlightsExpanded, setIsHighlightsExpanded] = useState(false);
 
     // Separate High priority and Normal priority palaces
     const highlights = PALACES.filter(p => p.priority === 'high');
@@ -28,10 +27,6 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
 
     const handleCloseModal = () => {
         setSelectedPalace(null);
-    };
-
-    const toggleHighlights = () => {
-        setIsHighlightsExpanded(!isHighlightsExpanded);
     };
 
     return (
@@ -56,64 +51,37 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="glass rounded-xl sm:rounded-2xl border border-white/10 overflow-hidden relative"
+                    className="space-y-4 sm:space-y-5"
                 >
-                    {/* Header with click to expand */}
-                    <motion.button
-                        onClick={toggleHighlights}
-                        className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 hover:bg-white/5 transition-colors group"
+                    {/* Header */}
+                    <motion.div
+                        className="flex items-center gap-2 sm:gap-3 px-2"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4, type: 'spring', stiffness: 200, damping: 20 }}
                     >
-                        <div className="flex items-center gap-2 sm:gap-3">
                         <motion.span
-                                className="material-symbols-outlined text-primary text-lg sm:text-xl"
+                            className="material-symbols-outlined text-primary text-lg sm:text-xl"
                             animate={{ rotate: [0, 10, -10, 0] }}
                             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                         >
                             stars
                         </motion.span>
-                            <h2 className="text-base sm:text-lg font-black uppercase tracking-widest">Tâm Điểm Lá Số</h2>
-                        </div>
-                        <motion.span
-                            className="material-symbols-outlined text-text-secondary transition-transform"
-                            animate={{ rotate: isHighlightsExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            expand_more
-                        </motion.span>
-                    </motion.button>
+                        <h2 className="text-base sm:text-lg font-black uppercase tracking-widest">Tâm Điểm Lá Số</h2>
+                    </motion.div>
 
-                    {/* Content with fixed height when collapsed */}
-                    <div className="relative">
-                        <motion.div
-                            className="overflow-hidden"
-                            initial={false}
-                            animate={{
-                                height: isHighlightsExpanded ? 'auto' : '280px',
-                            }}
-                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                            <div className="p-4 sm:p-5 pt-0">
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+                    {/* Content - Cards */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
                         {highlights.map((palace, i) => (
                             <PalaceCard
                                 key={palace.id}
                                 palace={palace}
-                                            content={getPalaceContent(data.menh as any, palace.id)}
+                                content={getPalaceContent(data.menh as any, palace.id)}
                                 index={i}
                                 onClick={() => handlePalaceClick(palace)}
+                                isExpanded={true}
                             />
                         ))}
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Gradient overlay when collapsed */}
-                        {!isHighlightsExpanded && (
-                            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background-dark via-background-dark/80 to-transparent pointer-events-none" />
-                        )}
                     </div>
                 </motion.div>
 
@@ -163,6 +131,8 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
                 <PalaceDetailModal
                     palace={selectedPalace}
                     menh={data.menh as any}
+                    chartData={data.chartData}
+                    fullName={data.fullName}
                     onClose={handleCloseModal}
                 />
             )}

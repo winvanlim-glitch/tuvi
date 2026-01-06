@@ -10,13 +10,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.34.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "framer-motion": "^12.23.26",
     "lunisolar": "^2.6.0",
+    "material-symbols": "^0.40.2",
     "next": "^16.1.1",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
