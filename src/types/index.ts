@@ -4,6 +4,7 @@ export interface ZodiacSign {
   name: string;
   icon: string;
   color: string;
+  slug?: string;
 }
 
 export interface BlogPost {

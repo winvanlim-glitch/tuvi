@@ -1,44 +1,119 @@
+import React from "react";
+import Link from "next/link";
+import { motion, Variants } from "framer-motion";
+import { ZodiacSign } from "@/types";
 
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
-import { ZodiacSign } from '@/types';
-
-export const signs: ZodiacSign[] = [
-  { id: '1', name: 'Bạch Dương', icon: 'wb_sunny', color: '#FF4D4D' },
-  { id: '2', name: 'Kim Ngưu', icon: 'pets', color: '#36E27B' },
-  { id: '3', name: 'Song Tử', icon: 'group', color: '#4D94FF' },
-  { id: '4', name: 'Cự Giải', icon: 'nightlight', color: '#FFD93D' },
-  { id: '5', name: 'Sư Tử', icon: 'emoji_nature', color: '#FF8C32' },
-  { id: '6', name: 'Xử Nữ', icon: 'spa', color: '#A78BFA' },
-  { id: '7', name: 'Thiên Bình', icon: 'balance', color: '#F472B6' },
-  { id: '8', name: 'Bọ Cạp', icon: 'scuba_diving', color: '#EF4444' },
-  { id: '9', name: 'Nhân Mã', icon: 'near_me', color: '#8B5CF6' },
-  { id: '10', name: 'Ma Kết', icon: 'terrain', color: '#10B981' },
-  { id: '11', name: 'Bảo Bình', icon: 'waves', color: '#06B6D4' },
-  { id: '12', name: 'Song Ngư', icon: 'sailing', color: '#3B82F6' },
+export const signs: (ZodiacSign & { slug: string })[] = [
+  {
+    id: "1",
+    name: "Bạch Dương",
+    icon: "wb_sunny",
+    color: "#FF4D4D",
+    slug: "bach-duong",
+  },
+  {
+    id: "2",
+    name: "Kim Ngưu",
+    icon: "pets",
+    color: "#36E27B",
+    slug: "kim-nguu",
+  },
+  {
+    id: "3",
+    name: "Song Tử",
+    icon: "group",
+    color: "#4D94FF",
+    slug: "song-tu",
+  },
+  {
+    id: "4",
+    name: "Cự Giải",
+    icon: "nightlight",
+    color: "#FFD93D",
+    slug: "cu-giai",
+  },
+  {
+    id: "5",
+    name: "Sư Tử",
+    icon: "emoji_nature",
+    color: "#FF8C32",
+    slug: "su-tu",
+  },
+  { id: "6", name: "Xử Nữ", icon: "spa", color: "#A78BFA", slug: "xu-nu" },
+  {
+    id: "7",
+    name: "Thiên Bình",
+    icon: "balance",
+    color: "#F472B6",
+    slug: "thien-binh",
+  },
+  {
+    id: "8",
+    name: "Bọ Cạp",
+    icon: "scuba_diving",
+    color: "#EF4444",
+    slug: "bo-cap",
+  },
+  {
+    id: "9",
+    name: "Nhân Mã",
+    icon: "near_me",
+    color: "#8B5CF6",
+    slug: "nhan-ma",
+  },
+  {
+    id: "10",
+    name: "Ma Kết",
+    icon: "terrain",
+    color: "#10B981",
+    slug: "ma-ket",
+  },
+  {
+    id: "11",
+    name: "Bảo Bình",
+    icon: "waves",
+    color: "#06B6D4",
+    slug: "bao-binh",
+  },
+  {
+    id: "12",
+    name: "Song Ngư",
+    icon: "sailing",
+    color: "#3B82F6",
+    slug: "song-ngu",
+  },
 ];
 
 const ZodiacGrid: React.FC = () => {
-  const [selectedId, setSelectedId] = React.useState('1');
-
+  // Animation mới: đơn giản, mượt, không blur, vào nhanh + hover phản hồi tốt
   const container: Variants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, y: 12 },
     visible: {
       opacity: 1,
+      y: 0,
       transition: {
-        staggerChildren: 0.05
-      }
-    }
+        when: "beforeChildren",
+        staggerChildren: 0.045,
+        delayChildren: 0.04,
+        duration: 0.35,
+        ease: "easeOut",
+      },
+    },
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, scale: 0.9, y: 20 },
+    hidden: { opacity: 0, scale: 0.9, y: 18 },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 18,
+        mass: 0.8,
+      },
+    },
   };
 
   return (
@@ -47,40 +122,54 @@ const ZodiacGrid: React.FC = () => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4"
+      className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"
     >
       {signs.map((sign) => (
-        <motion.div
+        <Link
           key={sign.id}
-          variants={item}
-          whileHover={{ y: -6, scale: 1.02 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setSelectedId(sign.id)}
-          className={`cursor-pointer rounded-xl sm:rounded-2xl lg:rounded-3xl p-2.5 sm:p-3 lg:p-4 flex flex-col items-center gap-2 sm:gap-2.5 lg:gap-3 transition-all duration-300 border ${selectedId === sign.id
-              ? 'bg-surface-dark border-primary/50 shadow-xl'
-              : 'bg-surface-dark/40 border-white/5 hover:border-white/20'
-            }`}
-          style={{
-            boxShadow: selectedId === sign.id ? `0 15px 30px ${sign.color}20` : 'none'
-          }}
+          href={`/cung-hoang-dao/${sign.slug}`}
+          className="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 rounded-[24px]"
         >
-          <div
-            className={`size-10 sm:size-12 lg:size-14 xl:size-16 rounded-full flex items-center justify-center transition-all duration-500`}
+          <motion.div
+            variants={item}
+            whileHover={{
+              y: -6,
+              scale: 1.03,
+              background: `radial-gradient(120% 120% at 50% 35%, ${sign.color}18, transparent 60%), #050809`,
+              boxShadow: `0 18px 45px ${sign.color}24`,
+            }}
+            whileTap={{
+              scale: 0.97,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 320,
+              damping: 22,
+              mass: 0.7,
+            }}
+            className="relative aspect-square rounded-[24px] p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-3 sm:gap-4 transition-all duration-500 border border-white/5 overflow-hidden will-change-transform"
             style={{
-              backgroundColor: selectedId === sign.id ? sign.color : 'rgba(17, 23, 20, 1)',
-              color: selectedId === sign.id ? '#111714' : 'rgba(255, 255, 255, 0.4)',
-              boxShadow: selectedId === sign.id ? `0 0 15px ${sign.color}40` : 'none'
+              background: "#050809",
             }}
           >
-            <span className="material-symbols-outlined text-xl sm:text-2xl lg:text-3xl">{sign.icon}</span>
-          </div>
-          <span
-            className={`text-[10px] sm:text-xs lg:text-sm font-bold text-center transition-colors`}
-            style={{ color: selectedId === sign.id ? sign.color : '#9eb7a8' }}
-          >
-            {sign.name}
-          </span>
-        </motion.div>
+            <div
+              className="relative size-12 sm:size-14 lg:size-16 rounded-[18px] flex items-center justify-center transition-all duration-500 group-hover:scale-110"
+              style={{
+                color: "#fefefe",
+              }}
+            >
+              <span className="material-symbols-outlined text-xl sm:text-2xl lg:text-3xl">
+                {sign.icon}
+              </span>
+            </div>
+            <span
+              className="relative text-xs sm:text-sm lg:text-base font-black text-center leading-tight tracking-wide drop-shadow-md transition-all duration-500 opacity-60 group-hover:opacity-100"
+              style={{ color: sign.color }}
+            >
+              {sign.name}
+            </span>
+          </motion.div>
+        </Link>
       ))}
     </motion.div>
   );

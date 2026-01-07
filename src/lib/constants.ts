@@ -55,7 +55,7 @@ export const SITE_CONFIG = {
   title: 'Tử Vi VN AI - Trợ lý tử vi & cung hoàng đạo',
   description: 'Trợ lý tử vi AI tiếng Việt: lập lá số, luận giải cung hoàng đạo, tarot và gợi ý cá nhân hóa dựa trên dữ liệu sinh.',
   url: 'https://tuvi-vn.com',
-  ogImage: '/images/og-image.jpg',
+  ogImage: '/images/thumb.png',
   keywords: 'tử vi AI, trí tuệ nhân tạo, trợ lý tử vi, cung hoàng đạo AI, tarot AI, giải mã lá số AI, tử vi miễn phí, tử vi hàng ngày, astrology AI',
   locale: 'vi_VN',
   type: 'website',
