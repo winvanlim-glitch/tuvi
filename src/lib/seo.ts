@@ -107,7 +107,8 @@ export function generateStructuredData(type: 'WebSite' | 'Article' | 'Organizati
   if (type === 'Organization') {
     return {
       ...baseData,
-      logo: `${SITE_CONFIG.url}/images/logo.png`,
+      logo: `${SITE_CONFIG.url}/icon-512.png`,
+      image: `${SITE_CONFIG.url}/icon-512.png`,
       sameAs: [
         // Add social media links here
       ],
