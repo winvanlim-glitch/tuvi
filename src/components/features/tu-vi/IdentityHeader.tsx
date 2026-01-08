@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { CalculatedData } from '@/hooks/useTuViCalculation';
 import LuckyStatCard from './LuckyStatCard';
 import { getLuckyHours } from '@/data/tuvi-stars';
@@ -78,6 +79,68 @@ const IdentityHeader: React.FC<IdentityHeaderProps> = ({ data, onReset }) => {
                             >
                                 {data.canChiYear}
                             </motion.span>
+                            {data.zodiacSign && (
+                                <Link href={`/cung-hoang-dao/${data.zodiacSign.slug}`}>
+                                    <motion.div
+                                        className="flex items-center gap-2 px-3 py-1 rounded-full cursor-pointer group relative overflow-hidden"
+                                        style={{
+                                            backgroundColor: `${data.zodiacSign.color}15`,
+                                            borderColor: `${data.zodiacSign.color}40`,
+                                        }}
+                                        initial={{ opacity: 0, scale: 0.8, x: -10 }}
+                                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                                        transition={{ 
+                                            type: 'spring', 
+                                            stiffness: 400, 
+                                            damping: 20,
+                                            delay: 0.1
+                                        }}
+                                        whileHover={{ 
+                                            scale: 1.08, 
+                                            backgroundColor: `${data.zodiacSign.color}25`,
+                                            borderColor: `${data.zodiacSign.color}60`,
+                                        }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <motion.span
+                                            className="material-symbols-outlined text-xs"
+                                            style={{ color: data.zodiacSign.color }}
+                                            animate={{ 
+                                                rotate: [0, 10, -10, 0],
+                                                scale: [1, 1.1, 1]
+                                            }}
+                                            transition={{ 
+                                                duration: 2, 
+                                                repeat: Infinity, 
+                                                ease: "easeInOut",
+                                                repeatDelay: 3
+                                            }}
+                                        >
+                                            {data.zodiacSign.icon}
+                                        </motion.span>
+                                        <span
+                                            className="text-[10px] font-black uppercase tracking-widest"
+                                            style={{ color: data.zodiacSign.color }}
+                                        >
+                                            {data.zodiacSign.name}
+                                        </span>
+                                        <motion.div
+                                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            style={{
+                                                background: `linear-gradient(90deg, transparent, ${data.zodiacSign.color}20, transparent)`,
+                                            }}
+                                            animate={{
+                                                x: ['-100%', '100%'],
+                                            }}
+                                            transition={{
+                                                duration: 1.5,
+                                                repeat: Infinity,
+                                                ease: "linear",
+                                            }}
+                                        />
+                                    </motion.div>
+                                </Link>
+                            )}
                         </div>
                         <motion.h1
                             className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tighter mb-2 leading-tight"

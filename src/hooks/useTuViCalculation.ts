@@ -1,6 +1,7 @@
 import { convertSolarToLunar, getMenh, getYearCanChi } from '@/lib/tuvi/core';
 import { MENH_RULES, TuViContent } from '@/data/tuvi-rules';
 import { calculateChart, ChartData } from '@/lib/tuvi/chart-calculation';
+import { getZodiacSignFromDate, ZodiacSignInfo } from '@/lib/zodiac-utils';
 
 export interface TuViFormData {
     fullName: string;
@@ -18,6 +19,7 @@ export interface CalculatedData {
     menh: string;
     menhContent: TuViContent;
     chartData: ChartData; // Thêm chart data mới
+    zodiacSign: ZodiacSignInfo | null; // Cung hoàng đạo
 }
 
 export function useTuViCalculation() {
@@ -42,6 +44,9 @@ export function useTuViCalculation() {
             formData.gender as 'Nam' | 'Nữ' | 'Khác'
         );
 
+        // Tính cung hoàng đạo từ ngày sinh
+        const zodiacSign = getZodiacSignFromDate(formData.dob);
+
         return {
             fullName: formData.fullName,
             solarDate: `${d}/${m}/${y}`,
@@ -49,7 +54,8 @@ export function useTuViCalculation() {
             canChiYear,
             menh,
             menhContent,
-            chartData
+            chartData,
+            zodiacSign
         };
     };
 
