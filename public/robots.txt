@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://astrology-vn.com/sitemap.xml
+Sitemap: https://tuvivn.xyz/sitemap.xml
 
 # Disallow admin or private pages if any
 # Disallow: /admin/
