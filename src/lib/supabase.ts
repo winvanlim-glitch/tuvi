@@ -46,3 +46,31 @@ export interface CommentRow {
   created_at?: string;
 }
 
+// Type definitions for interpretations table
+export interface InterpretationRow {
+  id?: string;
+  full_name: string;
+  birth_date?: string | null;
+  birth_time?: string | null;
+  timezone?: string | null;
+  location?: string | null;
+  gender?: string | null;
+  palace_id: string;
+  usage_purpose?: string | null;
+  question?: string | null;
+  session_id?: string | null;
+  chart_data: any; // JSONB
+  interpretation?: string | null;
+  model?: string | null;
+  prompt_tokens?: number | null;
+  completion_tokens?: number | null;
+  cost?: number | null;
+  ai_version?: string | null;
+  status?: string;
+  error_message?: string | null;
+  latency_ms?: number | null;
+  ip?: string | null;
+  user_agent?: string | null;
+  created_at?: string;
+}
+

@@ -133,6 +133,10 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
                     menh={data.menh as any}
                     chartData={data.chartData}
                     fullName={data.fullName}
+                    dob={data.dob}
+                    tob={data.tob}
+                    pob={data.pob}
+                    gender={data.gender}
                     onClose={handleCloseModal}
                 />
             )}

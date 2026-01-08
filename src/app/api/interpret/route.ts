@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import { ChartData } from '@/lib/tuvi/chart-calculation';
+import { supabase, InterpretationRow } from '@/lib/supabase';
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`
 const ai = new GoogleGenAI({});
@@ -67,9 +68,24 @@ Hãy viết luận giải ngay bây giờ:`;
  * Nhận chart data và trả về AI interpretation
  */
 export async function POST(request: NextRequest) {
+    const startTime = Date.now();
+    let interpretationId: string | undefined;
+    let body: any = {};
+    
     try {
-        const body = await request.json();
-        const { chartData, palaceId, fullName } = body;
+        body = await request.json();
+        const { 
+            chartData, 
+            palaceId, 
+            fullName,
+            birthDate,
+            birthTime,
+            timezone,
+            location,
+            usagePurpose,
+            question,
+            sessionId
+        } = body;
 
         if (!chartData || !palaceId || !fullName) {
             return NextResponse.json(
@@ -96,15 +112,113 @@ export async function POST(request: NextRequest) {
         });
 
         const interpretation = response.text || 'Không thể tạo luận giải.';
+        const latencyMs = Date.now() - startTime;
+
+        // Extract thông tin từ request headers
+        const ip = request.headers.get('x-forwarded-for') || 
+                   request.headers.get('x-real-ip') || 
+                   undefined;
+        const userAgent = request.headers.get('user-agent') || undefined;
+
+        // Lưu vào database
+        if (!supabase) {
+            console.warn('⚠️ Supabase client is not configured. Skipping database save.');
+            console.warn('Please check NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+        } else {
+            const interpretationRow: InterpretationRow = {
+                full_name: fullName.trim(),
+                birth_date: birthDate || null,
+                birth_time: birthTime || null,
+                timezone: timezone || null,
+                location: location || null,
+                gender: chartData.birth_info?.gender || null,
+                palace_id: palaceId,
+                usage_purpose: usagePurpose || null,
+                question: question || null,
+                session_id: sessionId || null,
+                chart_data: chartData,
+                interpretation: interpretation,
+                model: 'gemini-2.5-flash',
+                ai_version: '1.0',
+                status: 'success',
+                latency_ms: latencyMs,
+                ip: ip,
+                user_agent: userAgent,
+            };
+
+            console.log('💾 Attempting to save interpretation to database...');
+            console.log('📝 Data:', {
+                full_name: interpretationRow.full_name,
+                palace_id: interpretationRow.palace_id,
+                interpretation_length: interpretation.length,
+            });
+
+            const { data, error } = await supabase
+                .from('interpretations')
+                .insert([interpretationRow])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Failed to save interpretation to database:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code,
+                });
+                // Không fail request nếu lưu DB thất bại, chỉ log
+            } else {
+                console.log('✅ Successfully saved interpretation to database!');
+                console.log('📊 Record ID:', data?.id);
+                interpretationId = data.id;
+            }
+        }
 
         return NextResponse.json({
             interpretation,
             palaceId,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            id: interpretationId,
         });
 
     } catch (error: any) {
+        const latencyMs = Date.now() - startTime;
         console.error('AI Interpretation Error:', error);
+
+        // Lưu lỗi vào database nếu có đủ thông tin
+        if (supabase && body.fullName && body.palaceId && body.chartData) {
+            const ip = request.headers.get('x-forwarded-for') || 
+                       request.headers.get('x-real-ip') || 
+                       undefined;
+            const userAgent = request.headers.get('user-agent') || undefined;
+
+            const errorRow: InterpretationRow = {
+                full_name: body.fullName.trim(),
+                birth_date: body.birthDate || null,
+                birth_time: body.birthTime || null,
+                timezone: body.timezone || null,
+                location: body.location || null,
+                gender: body.chartData?.birth_info?.gender || null,
+                palace_id: body.palaceId,
+                usage_purpose: body.usagePurpose || null,
+                question: body.question || null,
+                session_id: body.sessionId || null,
+                chart_data: body.chartData,
+                model: 'gemini-2.5-flash',
+                status: 'error',
+                error_message: error.message,
+                latency_ms: latencyMs,
+                ip: ip,
+                user_agent: userAgent,
+            };
+
+            supabase
+                .from('interpretations')
+                .insert([errorRow])
+                .catch(err => console.error('Failed to save error to database:', err));
+        }
+
         return NextResponse.json(
             { 
                 error: 'Failed to generate interpretation',

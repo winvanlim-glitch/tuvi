@@ -12,10 +12,24 @@ interface PalaceDetailModalProps {
     menh: MenhType;
     chartData?: ChartData;
     fullName?: string;
+    dob?: string; // YYYY-MM-DD
+    tob?: string; // HH:mm
+    pob?: string; // Place of birth
+    gender?: string;
     onClose: () => void;
 }
 
-const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({ palace, menh, chartData, fullName, onClose }) => {
+const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({ 
+    palace, 
+    menh, 
+    chartData, 
+    fullName,
+    dob,
+    tob,
+    pob,
+    gender,
+    onClose 
+}) => {
     if (!palace) return null;
 
     // Generate cache key from chart data + palace
@@ -93,6 +107,13 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({ palace, menh, cha
         setAiInterpretation(''); // Reset để bắt đầu streaming
 
         try {
+            // Tạo sessionId từ fullName và timestamp để group các requests cùng user
+            const sessionId = fullName ? `${fullName}_${Date.now()}` : undefined;
+            
+            // Parse birthDate và birthTime từ dob và tob
+            const birthDate = dob || null;
+            const birthTime = tob ? `${tob}:00` : null; // Format: HH:mm:ss
+            
             const response = await fetch('/api/interpret/stream', {
                 method: 'POST',
                 headers: {
@@ -102,6 +123,12 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({ palace, menh, cha
                     chartData,
                     palaceId: palace.id,
                     fullName,
+                    birthDate,
+                    birthTime,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Ho_Chi_Minh',
+                    location: pob || null,
+                    usagePurpose: `Luận giải cung ${palace.name}`,
+                    sessionId,
                 }),
             });
 

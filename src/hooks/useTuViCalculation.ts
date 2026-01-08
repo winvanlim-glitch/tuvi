@@ -20,6 +20,11 @@ export interface CalculatedData {
     menhContent: TuViContent;
     chartData: ChartData; // Thêm chart data mới
     zodiacSign: ZodiacSignInfo | null; // Cung hoàng đạo
+    // Thêm thông tin gốc từ form để lưu vào database
+    dob: string; // YYYY-MM-DD
+    tob: string; // HH:mm
+    pob: string; // Place of birth
+    gender: string;
 }
 
 export function useTuViCalculation() {
@@ -55,7 +60,12 @@ export function useTuViCalculation() {
             menh,
             menhContent,
             chartData,
-            zodiacSign
+            zodiacSign,
+            // Lưu thông tin gốc từ form
+            dob: formData.dob,
+            tob: formData.tob,
+            pob: formData.pob,
+            gender: formData.gender
         };
     };
 

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import { ChartData } from '@/lib/tuvi/chart-calculation';
+import { supabase, InterpretationRow } from '@/lib/supabase';
 
 const ai = new GoogleGenAI({});
 
@@ -59,9 +60,23 @@ Hãy viết luận giải ngay bây giờ:`;
 }
 
 export async function POST(request: NextRequest) {
+    const startTime = Date.now();
+    let body: any = {};
+    
     try {
-        const body = await request.json();
-        const { chartData, palaceId, fullName } = body;
+        body = await request.json();
+        const { 
+            chartData, 
+            palaceId, 
+            fullName,
+            birthDate,
+            birthTime,
+            timezone,
+            location,
+            usagePurpose,
+            question,
+            sessionId
+        } = body;
 
         if (!chartData || !palaceId || !fullName) {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), {
@@ -81,10 +96,17 @@ export async function POST(request: NextRequest) {
         const userPrompt = createPrompt(chartData, palaceId, fullName);
         const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
 
+        // Extract thông tin từ request headers
+        const ip = request.headers.get('x-forwarded-for') || 
+                   request.headers.get('x-real-ip') || 
+                   undefined;
+        const userAgent = request.headers.get('user-agent') || undefined;
+
         // Create a ReadableStream for streaming response
         // Note: Gemini API may not support true streaming, so we simulate it by chunking the response
         const stream = new ReadableStream({
             async start(controller) {
+                let fullText = '';
                 try {
                     // Generate content
                     const response = await ai.models.generateContent({
@@ -92,7 +114,7 @@ export async function POST(request: NextRequest) {
                         contents: fullPrompt,
                     });
 
-                    const fullText = response.text || '';
+                    fullText = response.text || '';
                     
                     // Simulate streaming by sending chunks
                     // Split into words and send progressively for better UX
@@ -115,9 +137,95 @@ export async function POST(request: NextRequest) {
                     // Send completion signal
                     controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ done: true })}\n\n`));
                     controller.close();
+
+                    // Lưu vào database sau khi stream hoàn thành
+                    if (!supabase) {
+                        console.warn('⚠️ Supabase client is not configured. Skipping database save.');
+                        console.warn('Please check NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+                    } else if (!fullText) {
+                        console.warn('⚠️ No interpretation text to save.');
+                    } else {
+                        const latencyMs = Date.now() - startTime;
+                        const interpretationRow: InterpretationRow = {
+                            full_name: fullName.trim(),
+                            birth_date: birthDate || null,
+                            birth_time: birthTime || null,
+                            timezone: timezone || null,
+                            location: location || null,
+                            gender: chartData.birth_info?.gender || null,
+                            palace_id: palaceId,
+                            usage_purpose: usagePurpose || null,
+                            question: question || null,
+                            session_id: sessionId || null,
+                            chart_data: chartData,
+                            interpretation: fullText,
+                            model: 'gemini-2.5-flash',
+                            ai_version: '1.0',
+                            status: 'success',
+                            latency_ms: latencyMs,
+                            ip: ip,
+                            user_agent: userAgent,
+                        };
+
+                        console.log('💾 Attempting to save interpretation to database...');
+                        console.log('📝 Data:', {
+                            full_name: interpretationRow.full_name,
+                            palace_id: interpretationRow.palace_id,
+                            interpretation_length: fullText.length,
+                        });
+
+                        const { data, error } = await supabase
+                            .from('interpretations')
+                            .insert([interpretationRow])
+                            .select()
+                            .single();
+
+                        if (error) {
+                            console.error('❌ Failed to save interpretation to database:', error);
+                            console.error('Error details:', {
+                                message: error.message,
+                                details: error.details,
+                                hint: error.hint,
+                                code: error.code,
+                            });
+                        } else {
+                            console.log('✅ Successfully saved interpretation to database!');
+                            console.log('📊 Record ID:', data?.id);
+                        }
+                    }
                 } catch (error: any) {
                     controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: error.message })}\n\n`));
                     controller.close();
+
+                    // Lưu lỗi vào database
+                    if (supabase) {
+                        const latencyMs = Date.now() - startTime;
+                        const errorRow: InterpretationRow = {
+                            full_name: body.fullName?.trim() || 'Unknown',
+                            birth_date: body.birthDate || null,
+                            birth_time: body.birthTime || null,
+                            timezone: body.timezone || null,
+                            location: body.location || null,
+                            gender: body.chartData?.birth_info?.gender || null,
+                            palace_id: body.palaceId || 'unknown',
+                            usage_purpose: body.usagePurpose || null,
+                            question: body.question || null,
+                            session_id: body.sessionId || null,
+                            chart_data: body.chartData || {},
+                            interpretation: fullText || null,
+                            model: 'gemini-2.5-flash',
+                            status: 'error',
+                            error_message: error.message,
+                            latency_ms: latencyMs,
+                            ip: ip,
+                            user_agent: userAgent,
+                        };
+
+                        supabase
+                            .from('interpretations')
+                            .insert([errorRow])
+                            .catch(err => console.error('Failed to save error to database:', err));
+                    }
                 }
             },
         });
@@ -131,6 +239,41 @@ export async function POST(request: NextRequest) {
         });
     } catch (error: any) {
         console.error('Streaming Error:', error);
+        
+        // Lưu lỗi vào database nếu có đủ thông tin
+        if (supabase && body.fullName && body.palaceId) {
+            const latencyMs = Date.now() - startTime;
+            const ip = request.headers.get('x-forwarded-for') || 
+                       request.headers.get('x-real-ip') || 
+                       undefined;
+            const userAgent = request.headers.get('user-agent') || undefined;
+
+            const errorRow: InterpretationRow = {
+                full_name: body.fullName.trim(),
+                birth_date: body.birthDate || null,
+                birth_time: body.birthTime || null,
+                timezone: body.timezone || null,
+                location: body.location || null,
+                gender: body.chartData?.birth_info?.gender || null,
+                palace_id: body.palaceId,
+                usage_purpose: body.usagePurpose || null,
+                question: body.question || null,
+                session_id: body.sessionId || null,
+                chart_data: body.chartData || {},
+                model: 'gemini-2.5-flash',
+                status: 'error',
+                error_message: error.message,
+                latency_ms: latencyMs,
+                ip: ip,
+                user_agent: userAgent,
+            };
+
+            supabase
+                .from('interpretations')
+                .insert([errorRow])
+                .catch(err => console.error('Failed to save error to database:', err));
+        }
+
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
