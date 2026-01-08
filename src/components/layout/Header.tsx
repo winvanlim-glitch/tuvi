@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Link from 'next/link';
 
 const Header: React.FC = () => {
   return (
@@ -18,10 +19,13 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2 sm:gap-3">
-          <button className="text-text-secondary hover:text-white transition-colors relative" aria-label="Notifications">
-            <span className="material-symbols-outlined text-lg sm:text-xl">notifications</span>
-            <span className="absolute top-0 right-0 size-1.5 sm:size-2 bg-red-500 rounded-full border border-background-dark"></span>
-          </button>
+          <Link 
+            href="/gop-y" 
+            className="text-text-secondary hover:text-white transition-colors relative" 
+            aria-label="Góp ý"
+          >
+            <span className="material-symbols-outlined text-lg sm:text-xl">feedback</span>
+          </Link>
           <div className="size-8 sm:size-9 rounded-full bg-gradient-to-tr from-primary to-blue-500 p-[2px] cursor-pointer">
             <img 
               src="https://picsum.photos/seed/user/100/100" 

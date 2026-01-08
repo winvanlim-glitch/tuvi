@@ -8,6 +8,8 @@ import Sidebar from '@/components/layout/Sidebar';
 import BottomNav from '@/components/layout/BottomNav';
 import SearchBar from '@/components/features/SearchBar';
 import RightSidebar from '@/components/layout/RightSidebar';
+import { ToastProvider } from '@/components/common/Toast';
+import { DevelopmentToast } from '@/components/common/DevelopmentToast';
 
 const notoSans = localFont({
     src: [
@@ -110,18 +112,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 />
             </head>
             <body className={`${notoSans.variable} min-h-screen bg-background-dark font-display text-white selection:bg-primary/30 antialiased`}>
-                <noscript>
-                    <iframe
-                        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-                        height="0"
-                        width="0"
-                        style={{ display: 'none', visibility: 'hidden' }}
-                    />
-                </noscript>
-                {/* Mobile Header */}
-                <header className="lg:hidden">
-                    <Header />
-                </header>
+                <ToastProvider>
+                    <DevelopmentToast />
+                    <noscript>
+                        <iframe
+                            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+                            height="0"
+                            width="0"
+                            style={{ display: 'none', visibility: 'hidden' }}
+                        />
+                    </noscript>
+                    {/* Mobile Header */}
+                    <header className="lg:hidden">
+                        <Header />
+                    </header>
 
                 <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row items-start gap-0 lg:gap-4 xl:gap-6 lg:px-4 xl:px-6">
                     {/* Left Sidebar - Sticky PC */}
@@ -154,6 +158,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <nav className="lg:hidden" aria-label="Bottom navigation">
                     <BottomNav />
                 </nav>
+                </ToastProvider>
             </body>
         </html>
     );

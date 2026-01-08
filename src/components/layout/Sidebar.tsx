@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
     { id: 'tarot', label: 'Trải bài Tarot', icon: 'style', href: '/tarot' },
     { id: 'signs', label: '12 Cung mệnh', icon: 'language', href: '/cung-hoang-dao' },
     { id: 'compatibility', label: 'Độ tương hợp', icon: 'favorite', href: '/tuong-hop' },
-    { id: 'settings', label: 'Cài đặt', icon: 'settings', href: '/cai-dat' },
+    { id: 'feedback', label: 'Góp ý', icon: 'feedback', href: '/gop-y' },
   ];
 
   const containerVariants: Variants = {
