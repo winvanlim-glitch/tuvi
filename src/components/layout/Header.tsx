@@ -29,7 +29,7 @@ const Header: React.FC = () => {
           <div className="size-8 sm:size-9 rounded-full bg-gradient-to-tr from-primary to-blue-500 p-[2px] cursor-pointer">
             <img 
               src="https://picsum.photos/seed/user/100/100" 
-              alt="Avatar" 
+              alt="Avatar người dùng Tử Vi VN" 
               className="rounded-full w-full h-full object-cover border-2 border-background-dark"
             />
           </div>
