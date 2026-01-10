@@ -213,10 +213,13 @@ export async function POST(request: NextRequest) {
                 user_agent: userAgent,
             };
 
-            supabase
-                .from('interpretations')
-                .insert([errorRow])
-                .catch(err => console.error('Failed to save error to database:', err));
+            try {
+                await supabase
+                    .from('interpretations')
+                    .insert([errorRow]);
+            } catch (err) {
+                console.error('Failed to save error to database:', err);
+            }
         }
 
         return NextResponse.json(
