@@ -219,14 +219,14 @@ export const MINOR_STARS: StarDefinition[] = [
         negative: ['Dễ nóng nảy', 'Thiếu kiên nhẫn']
     },
     {
-        id: 'thien_phu',
-        name: 'Thiên Phủ',
-        vietnameseName: 'Thiên Phủ',
+        id: 'thien_phuoc',
+        name: 'Thiên Phước',
+        vietnameseName: 'Thiên Phước',
         type: 'minor',
         element: 'Thổ',
-        meaning: 'Phủ đệ tinh, biểu trưng cho sự che chở và bảo vệ',
-        positive: ['Được bảo vệ', 'Có nơi nương tựa', 'An toàn'],
-        negative: ['Thiếu tự lập', 'Dễ ỷ lại']
+        meaning: 'Phước đức tinh, biểu trưng cho phúc lành và may mắn',
+        positive: ['May mắn', 'Phúc đức', 'Gặp lành', 'Được quý nhân phù trợ'],
+        negative: ['Dễ ỷ lại', 'Thiếu nỗ lực']
     },
     {
         id: 'thien_huu',

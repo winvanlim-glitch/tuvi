@@ -5,6 +5,7 @@ import { CalculatedData } from '@/hooks/useTuViCalculation';
 import IdentityHeader from './IdentityHeader';
 import PalaceCard from './PalaceCard';
 import PalaceGridItem from './PalaceGridItem';
+import PalaceChart from './PalaceChart';
 import PalaceDetailModal from './PalaceDetailModal';
 import { staggerContainer, fadeInUp } from '@/lib/animations';
 import { getPalaceContent } from '@/lib/tuvi-interpretation-helper';
@@ -16,6 +17,7 @@ interface ChartResultProps {
 
 const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
     const [selectedPalace, setSelectedPalace] = useState<PalaceDefinition | null>(null);
+    const [viewMode, setViewMode] = useState<'list' | 'circular'>('list');
 
     // Separate High priority and Normal priority palaces
     const highlights = PALACES.filter(p => p.priority === 'high');
@@ -46,6 +48,88 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
                     <IdentityHeader data={data} onReset={onReset} />
                 </motion.div>
 
+                {/* View Toggle Button */}
+                <motion.div
+                    className="flex justify-center mb-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <div className="inline-flex bg-surface-variant rounded-full p-1 shadow-md">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                viewMode === 'list'
+                                    ? 'bg-primary text-white shadow-md'
+                                    : 'text-text-secondary hover:bg-surface-hover'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-lg">grid_view</span>
+                                <span className="hidden sm:inline">Danh sách</span>
+                            </span>
+                        </button>
+                        <button
+                            onClick={() => setViewMode('circular')}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                viewMode === 'circular'
+                                    ? 'bg-primary text-white shadow-md'
+                                    : 'text-text-secondary hover:bg-surface-hover'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-lg">circle</span>
+                                <span className="hidden sm:inline">Biểu đồ</span>
+                            </span>
+                        </button>
+                    </div>
+                </motion.div>
+
+                {/* CIRCULAR VIEW */}
+                {viewMode === 'circular' && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="py-8"
+                    >
+                        <motion.div
+                            className="flex items-center gap-2 sm:gap-3 mb-6 px-2 justify-center"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
+                            <motion.span
+                                className="material-symbols-outlined text-primary text-xl sm:text-2xl"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                            >
+                                public
+                            </motion.span>
+                            <h2 className="text-lg sm:text-xl font-black uppercase tracking-widest">Lá Số Tròn</h2>
+                        </motion.div>
+
+                        {/* Circular Chart */}
+                        <div className="w-full max-w-2xl mx-auto">
+                            <PalaceChart 
+                                chartData={data.chartData as any} 
+                                menh={data.menh}
+                                onPalaceClick={(palaceId) => {
+                                    const palace = PALACES.find(p => p.id === palaceId);
+                                    if (palace) handlePalaceClick(palace);
+                                }}
+                            />
+                        </div>
+
+                        {/* Click hint */}
+                        <p className="text-center text-text-secondary text-sm mt-6">
+                            Nhấp vào các cung để xem chi tiết
+                        </p>
+                    </motion.div>
+                )}
+
+                {/* LIST VIEW */}
+                {viewMode === 'list' && (
+                    <>
                 {/* SECTION 1: HIGHLIGHTS (Mệnh - Tài - Quan) */}
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -123,6 +207,8 @@ const ChartResult: React.FC<ChartResultProps> = ({ data, onReset }) => {
                         ))}
                     </motion.div>
                 </motion.div>
+                    </>
+                )}
 
             </motion.div>
 

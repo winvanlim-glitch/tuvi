@@ -4,6 +4,7 @@ import BirthDatePicker from "./BirthDatePicker";
 import BirthTimePicker from "./BirthTimePicker";
 import { FormData } from "@/hooks/useFormState";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { openAdLink } from "@/lib/ads";
 
 interface InputFormProps {
   formData: FormData;
@@ -18,6 +19,11 @@ const InputForm: React.FC<InputFormProps> = ({
   onSubmit,
   isValid,
 }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    openAdLink('_blank', 'tu-vi');
+    onSubmit(e);
+  };
+
   return (
     <motion.div
       key="input-form"
@@ -70,7 +76,7 @@ const InputForm: React.FC<InputFormProps> = ({
       </div>
 
       <motion.form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 overflow-visible"
         variants={staggerContainer}
         initial="hidden"

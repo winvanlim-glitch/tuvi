@@ -6,6 +6,7 @@ import { majorArcana } from '@/data/tarot/deck';
 import { useTarotDraw, DrawMode, FocusTab } from '@/hooks/useTarotDraw';
 import TarotCardView from '@/components/tarot/TarotCardView';
 import TarotAdviceTabs from '@/components/tarot/TarotAdviceTabs';
+import { openAdLink } from '@/lib/ads';
 
 const TarotPage: React.FC = () => {
   const [mode, setMode] = useState<DrawMode>('single');
@@ -140,7 +141,12 @@ const TarotPage: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.96 }}
             disabled={isShuffling}
-            onClick={hasDrawn ? reshuffle : draw}
+            onClick={() => {
+              if (!hasDrawn) {
+                openAdLink('_blank', 'tarot');
+              }
+              hasDrawn ? reshuffle() : draw();
+            }}
             className="mt-1 px-6 sm:px-8 py-3 sm:py-3.5 rounded-3xl bg-primary text-surface-dark text-xs sm:text-sm font-black uppercase tracking-[0.18em] shadow-2xl shadow-primary/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-primary/40"
           >
             {hasDrawn ? (mode === 'yesno' ? 'Hỏi lại' : 'Bốc lại') : 'Bốc bài'}

@@ -6,6 +6,7 @@ import { MenhType } from '@/data/tuvi-interpretations';
 import { getFullPalaceInterpretation, getPalaceContent } from '@/lib/tuvi-interpretation-helper';
 import { ChartData } from '@/lib/tuvi/chart-calculation';
 import AIInterpretationModal from './AIInterpretationModal';
+import { openAdLink } from '@/lib/ads';
 
 interface PalaceDetailModalProps {
     palace: PalaceDefinition | null;
@@ -96,6 +97,7 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
     const displayContent = aiInterpretation || content;
 
     const handleGenerateAI = async () => {
+        openAdLink();
         if (!chartData || !fullName) {
             setAiError('Thiếu thông tin để tạo luận giải AI');
             return;

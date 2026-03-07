@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
-import { ChartData } from '@/lib/tuvi/chart-calculation';
+import { ChartData, PALACE_IDS } from '@/lib/tuvi/chart-calculation';
+import { STAR_BY_ID } from '@/data/tuvi-stars';
 import { supabase, InterpretationRow } from '@/lib/supabase';
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`
@@ -27,10 +28,30 @@ function createPrompt(chartData: ChartData, palaceId: string, fullName: string):
 
     const palaceName = palaceNames[palaceId] || palaceId;
     const palaceData = chartData[palaceId as keyof ChartData] as any;
-    
-    const mainStars = palaceData?.main_stars?.join(', ') || 'Không có';
-    const supportStars = palaceData?.support_stars?.join(', ') || 'Không có';
-    const status = palaceData?.status || 'Bình';
+
+    // Lấy thông tin chi tiết về sao trong cung
+    const stars = palaceData?.stars || [];
+    const mainStars = stars.filter((s: any) => s.type === 'major');
+    const minorStars = stars.filter((s: any) => s.type === 'minor');
+
+    // Format danh sách sao với status
+    const formatStars = (starList: any[]) =>
+        starList.map(s => `${s.starName} (${s.status || 'Bình'})`).join(', ') || 'Không có';
+
+    const minorStarsFormatted = formatStars(minorStars.slice(0, 5));
+
+    // Sao chính: status (Miếu/Vượng/Đắc Địa/Hãm Địa/Bình) + Ngũ hành
+    const mainStarsWithElement = mainStars
+        .map((s: any) => {
+            const def = STAR_BY_ID[s.starId];
+            const element = def?.element ? `, Ngũ hành: ${def.element}` : '';
+            return `${s.starName} (${s.status || 'Bình'}${element})`;
+        })
+        .join('; ') || 'Không có';
+
+    // Lấy thông tin Tứ Hóa (vị trí theo chỉ số cung 0–11)
+    const tuHoa = chartData.tu_hoa;
+    const tuHoaInfo = `Liêm Trinh: cung ${palaceNames[PALACE_IDS[tuHoa.lien_trinh]] ?? PALACE_IDS[tuHoa.lien_trinh]}, Phá Quân: cung ${palaceNames[PALACE_IDS[tuHoa.pha_quan]] ?? PALACE_IDS[tuHoa.pha_quan]}, Thái Dương: cung ${palaceNames[PALACE_IDS[tuHoa.thai_duong]] ?? PALACE_IDS[tuHoa.thai_duong]}, Vũ Khúc: cung ${palaceNames[PALACE_IDS[tuHoa.vu_khuc]] ?? PALACE_IDS[tuHoa.vu_khuc]}`;
 
     return `Bạn là chuyên gia Tử Vi 20 năm kinh nghiệm.
 Dựa vào dữ liệu lá số Tử Vi sau, hãy luận giải chi tiết về cung ${palaceName} cho ${fullName}.
@@ -39,24 +60,29 @@ THÔNG TIN LÁ SỐ:
 - Mệnh: ${chartData.birth_info.element}
 - Giới tính: ${chartData.birth_info.gender}
 - Can Chi năm: ${chartData.birth_info.canChiYear}
+- Can Chi tháng: ${chartData.birth_info.canChiMonth}
+- Can Chi ngày: ${chartData.birth_info.canChiDay}
 - Can Chi giờ: ${chartData.birth_info.hour}
 
+TỨ HÓA (vị trí các sao Tứ Hóa):
+${tuHoaInfo}
+
 CUNG ${palaceName.toUpperCase()}:
-- Sao chính: ${mainStars}
-- Sao phụ: ${supportStars}
-- Trạng thái: ${status}
+- Sao chính (status + ngũ hành): ${mainStarsWithElement}
+- Sao phụ: ${minorStarsFormatted}
+- Trạng thái cung: ${palaceData?.status || 'Bình'}
 
 YÊU CẦU LUẬN GIẢI:
-1. Phân tích tính cách và đặc điểm nổi bật (nếu là cung Mệnh)
-2. Tình hình sự nghiệp & tiền bạc (nếu là Tài Bạch hoặc Quan Lộc)
-3. Điểm mạnh và điểm yếu cụ thể
+1. Phân tích chi tiết từng sao chính và ảnh hưởng của nó (dựa trên status: Miếu/Vượng/Đắc Địa/Hãm Địa)
+2. Đánh giá tổng thể cung dựa trên sự kết hợp giữa các sao
+3. Điểm mạnh và điểm yếu cụ thể của cung này
 4. Lời khuyên thực tế, có thể áp dụng ngay
-5. Dự đoán xu hướng phát triển
+5. Dự đoán xu hướng phát triển trong tương lai
 
 VĂN PHONG:
 - Chắc chắn, tự tin, không mơ hồ
 - Cá nhân hóa, gọi tên ${fullName}
-- Dài và sâu, ít nhất 200-300 từ
+- Dài và sâu, ít nhất 300-400 từ
 - Thực tế, có thể áp dụng được
 - Tích cực nhưng không che giấu điểm yếu
 

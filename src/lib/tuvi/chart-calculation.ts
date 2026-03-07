@@ -52,62 +52,55 @@ export interface ChartData {
     no_boc: PalaceData;
     tat_ach: PalaceData;
     birth_info: {
-        hour: string; // Can Chi giờ
+        hour: string;
         gender: 'Nam' | 'Nữ' | 'Khác';
-        element: string; // Ngũ hành
+        element: string;
         canChiYear: string;
         canChiMonth: string;
         canChiDay: string;
     };
+    /** Vị trí Tứ Hóa: chỉ số cung (0–11) của Liêm Trinh, Phá Quân, Thái Dương, Vũ Khúc */
+    tu_hoa: {
+        lien_trinh: number;
+        pha_quan: number;
+        thai_duong: number;
+        vu_khuc: number;
+    };
 }
 
-// Can Chi mapping
 const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
 const CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 
-/**
- * Tính Can Chi giờ từ giờ sinh (0-23)
- */
+const CHI_ELEMENTS: Record<string, string> = {
+    'Tý': 'Thủy', 'Sửu': 'Thổ', 'Dần': 'Mộc', 'Mão': 'Mộc',
+    'Thìn': 'Thổ', 'Tỵ': 'Hỏa', 'Ngọ': 'Hỏa', 'Mùi': 'Thổ',
+    'Thân': 'Kim', 'Dậu': 'Kim', 'Tuất': 'Thổ', 'Hợi': 'Thủy'
+};
+
 function getHourCanChi(hour: number): string {
-    // Giờ Tý = 23h-1h, Sửu = 1h-3h, ...
     let chiIndex = Math.floor((hour + 1) / 2) % 12;
-    if (hour === 23) chiIndex = 0; // 23h thuộc Tý
-    
-    // Can giờ dựa trên Can ngày (đơn giản hóa)
-    // Trong thực tế cần tính từ Can ngày, ở đây dùng công thức đơn giản
+    if (hour === 23) chiIndex = 0;
     const canIndex = (chiIndex * 2) % 10;
-    
     return `${CAN[canIndex]} ${CHI[chiIndex]}`;
 }
 
-/**
- * Tính Can Chi tháng từ tháng âm lịch
- */
 function getMonthCanChi(month: number, year: number): string {
-    // Công thức đơn giản: Can tháng = (Can năm * 2 + tháng - 1) % 10
     const canYearIndex = (year + 6) % 10;
     const canMonthIndex = (canYearIndex * 2 + month - 1) % 10;
     const chiMonthIndex = (month + 1) % 12;
-    
     return `${CAN[canMonthIndex]} ${CHI[chiMonthIndex]}`;
 }
 
-/**
- * Tính Can Chi ngày (đơn giản hóa)
- */
-function getDayCanChi(day: number, month: number, year: number): string {
-    // Công thức đơn giản, trong thực tế cần tính chính xác hơn
-    const base = year * 365 + month * 30 + day;
-    const canIndex = (base + 6) % 10;
-    const chiIndex = (base + 8) % 12;
-    
-    return `${CAN[canIndex]} ${CHI[chiIndex]}`;
+function getDayCanChi(lunarDay: number, lunarMonth: number, year: number, canYear: string): string {
+    const canYearIndex = CAN.indexOf(canYear);
+    const canDayIndex = (canYearIndex * 6 + lunarMonth * 9 + lunarDay) % 10;
+    const baseYear = 1984;
+    const yearDiff = year - baseYear;
+    const totalDays = yearDiff * 365 + Math.floor(yearDiff / 4) + (lunarMonth - 1) * 30 + lunarDay;
+    const chiDayIndex = totalDays % 12;
+    return `${CAN[canDayIndex]} ${CHI[chiDayIndex]}`;
 }
 
-/**
- * Tính cung Mệnh dựa trên tháng và giờ sinh
- * Công thức: Cung Mệnh = (Tháng - Giờ) mod 12 + 1
- */
 function calculateMenhPalace(month: number, hour: number): number {
     const hourPalace = Math.floor((hour + 1) / 2) % 12;
     let menhIndex = (month - hourPalace - 1) % 12;
@@ -115,11 +108,36 @@ function calculateMenhPalace(month: number, hour: number): number {
     return menhIndex;
 }
 
-/**
- * An sao chính vào cung Mệnh dựa trên tháng sinh
- */
+function calculateTuHoa(menhIndex: number, canYear: string): { lien_trinh: number; pha_quan: number; thai_duong: number; vu_khuc: number } {
+    const canIndex = CAN.indexOf(canYear);
+    let lien_trinh: number, pha_quan: number, thai_duong: number, vu_khuc: number;
+    
+    if (canIndex === 0 || canIndex === 1 || canIndex === 8 || canIndex === 9) {
+        lien_trinh = (menhIndex + 2) % 12;
+        pha_quan = (menhIndex + 8) % 12;
+        thai_duong = (menhIndex + 10) % 12;
+        vu_khuc = (menhIndex + 4) % 12;
+    } else if (canIndex === 2 || canIndex === 3) {
+        thai_duong = (menhIndex + 2) % 12;
+        vu_khuc = (menhIndex + 8) % 12;
+        lien_trinh = (menhIndex + 10) % 12;
+        pha_quan = (menhIndex + 4) % 12;
+    } else if (canIndex === 4 || canIndex === 5) {
+        lien_trinh = (menhIndex + 2) % 12;
+        vu_khuc = (menhIndex + 8) % 12;
+        pha_quan = (menhIndex + 10) % 12;
+        thai_duong = (menhIndex + 4) % 12;
+    } else {
+        pha_quan = (menhIndex + 2) % 12;
+        thai_duong = (menhIndex + 8) % 12;
+        vu_khuc = (menhIndex + 10) % 12;
+        lien_trinh = (menhIndex + 4) % 12;
+    }
+    
+    return { lien_trinh, pha_quan, thai_duong, vu_khuc };
+}
+
 function getMainStarInMenh(month: number): string[] {
-    // Đơn giản hóa: dựa trên tháng để chọn sao chính
     const monthStars: Record<number, string[]> = {
         1: ['tu_vi', 'thien_co'],
         2: ['thien_co', 'thai_am'],
@@ -134,109 +152,91 @@ function getMainStarInMenh(month: number): string[] {
         11: ['thien_tuong', 'thien_co'],
         12: ['thien_luong', 'thien_co']
     };
-    
     return monthStars[month] || ['tu_vi', 'thien_co'];
 }
 
-/**
- * An sao phụ vào các cung
- */
-function getSupportStars(palaceIndex: number, month: number, hour: number): string[] {
+function getSupportStars(palaceIndex: number, month: number, hour: number, menhIndex: number): string[] {
     const stars: string[] = [];
     
-    // Thiên Việt - quý nhân tinh
-    if (palaceIndex === 0 || palaceIndex === 4) { // Mệnh hoặc Quan Lộc
-        stars.push('thien_viet');
-    }
-    
-    // Thiên Mã - di động tinh
-    if (palaceIndex === 11) { // Thiên Di
-        stars.push('thien_ma');
-    }
-    
-    // Thiên Phúc - phúc đức
-    if (palaceIndex === 2) { // Phúc Đức
-        stars.push('thien_phuc');
-    }
-    
-    // Thiên Lộc - tài lộc
-    if (palaceIndex === 7) { // Tài Bạch
-        stars.push('thien_loi');
-    }
+    if (palaceIndex === menhIndex || palaceIndex === 4) stars.push('thien_viet');
+    if (palaceIndex === 11) stars.push('thien_ma');
+    if (palaceIndex === 2) stars.push('thien_phuc');
+    if (palaceIndex === 7) stars.push('thien_loi');
+    if (palaceIndex === 2 || palaceIndex === menhIndex) stars.push('thien_duc');
+    if (palaceIndex === 6) stars.push('thien_y');
+    if (palaceIndex === 4 || palaceIndex === menhIndex) stars.push('thien_quy');
+    if (palaceIndex === 8) stars.push('thien_tu');
+    if (palaceIndex === 10) stars.push('thien_huu');
+    if (palaceIndex === 4) stars.push('thien_quan');
+    if (palaceIndex === 6) stars.push('thien_khong');
+    if (palaceIndex === 0) stars.push('thien_khoc');
+    if (palaceIndex === 6) stars.push('thien_hinh');
+    if (palaceIndex === 5) stars.push('thien_sat');
     
     return stars;
 }
 
-/**
- * Xác định trạng thái sao (Miếu, Vượng, Đắc Địa, Hãm Địa)
- */
-function getStarStatus(starId: string, palaceIndex: number, element: string): 'Miếu' | 'Vượng' | 'Đắc Địa' | 'Hãm Địa' | 'Bình' {
+function getStarStatus(starId: string, palaceIndex: number, chiMonth: string, canYear: string): 'Miếu' | 'Vượng' | 'Đắc Địa' | 'Hãm Địa' | 'Bình' {
     const star = STAR_BY_ID[starId];
-    if (!star) return 'Bình';
+    if (!star || !star.element) return 'Bình';
     
-    // Logic đơn giản: sao cùng hành với cung thì Vượng
-    // Trong thực tế cần logic phức tạp hơn
-    const palaceElements: Record<number, string> = {
-        0: element, // Mệnh dùng mệnh
-        4: 'Hỏa', // Quan Lộc thường Hỏa
-        7: 'Kim', // Tài Bạch thường Kim
+    const palaceElement = CHI_ELEMENTS[chiMonth] || 'Bình';
+    
+    if (star.element === palaceElement) return 'Vượng';
+    
+    const starPalaceRules: Record<string, number[]> = {
+        'tu_vi': [0], 'thien_phu': [7], 'thai_am': [11], 'tham_lang': [3],
+        'cu_mon': [9], 'thien_tuong': [4], 'thien_luong': [6], 'that_sat': [5],
+        'pha_quan': [1], 'vu_khuc': [2], 'thien_dong': [8], 'thai_duong': [10], 'lien_trinh': [3],
     };
     
-    const palaceElement = palaceElements[palaceIndex] || 'Bình';
+    if (starPalaceRules[starId]?.includes(palaceIndex)) return 'Miếu';
     
-    if (star.element === palaceElement) {
-        return 'Vượng';
-    }
+    const elements = ['Kim', 'Mộc', 'Thủy', 'Hỏa', 'Thổ'];
+    const controlMap: Record<string, string> = {
+        'Kim': 'Mộc', 'Mộc': 'Thổ', 'Thổ': 'Thủy', 'Thủy': 'Hỏa', 'Hỏa': 'Kim'
+    };
     
-    // Một số sao đặc biệt
-    if (starId === 'tu_vi' && palaceIndex === 0) return 'Miếu';
-    if (starId === 'thien_phu' && palaceIndex === 7) return 'Vượng';
+    if (controlMap[star.element] === palaceElement) return 'Hãm Địa';
+    
+    const produceMap: Record<string, string> = {
+        'Kim': 'Thủy', 'Thủy': 'Mộc', 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim'
+    };
+    
+    if (produceMap[star.element] === palaceElement) return 'Đắc Địa';
     
     return 'Bình';
 }
 
-/**
- * Tính toán toàn bộ lá số Tử Vi
- */
 export function calculateChart(
-    day: number,
-    month: number,
-    year: number,
-    hour: number,
-    minute: number,
-    gender: 'Nam' | 'Nữ' | 'Khác'
+    day: number, month: number, year: number,
+    hour: number, minute: number, gender: 'Nam' | 'Nữ' | 'Khác'
 ): ChartData {
     const lunar = convertSolarToLunar(day, month, year);
     const element = getMenhFromYear(year);
     
-    // Tính Can Chi
     const canChiYear = `${lunar.canYear} ${lunar.chiYear}`;
     const canChiMonth = getMonthCanChi(lunar.month, year);
-    const canChiDay = getDayCanChi(lunar.day, lunar.month, year);
+    const canChiDay = getDayCanChi(lunar.day, lunar.month, year, lunar.canYear);
     const canChiHour = getHourCanChi(hour);
     
-    // Tính cung Mệnh
     const menhIndex = calculateMenhPalace(lunar.month, hour);
+    const tuHoa = calculateTuHoa(menhIndex, lunar.canYear);
     
-    // Tạo dữ liệu cho 12 cung
     const chart: Partial<ChartData> = {
         birth_info: {
-            hour: canChiHour,
-            gender,
-            element,
-            canChiYear,
-            canChiMonth,
-            canChiDay
-        }
+            hour: canChiHour, gender, element, canChiYear, canChiMonth, canChiDay
+        },
+        tu_hoa: tuHoa
     };
     
-    // Khởi tạo tất cả cung
+    const chiMonth = canChiMonth.split(' ')[1];
+    
     PALACE_IDS.forEach((palaceId, index) => {
         const stars: StarPlacement[] = [];
         const mainStars: string[] = [];
         const supportStars: string[] = [];
         
-        // An sao chính vào cung Mệnh
         if (index === menhIndex) {
             const mainStarIds = getMainStarInMenh(lunar.month);
             mainStarIds.forEach(starId => {
@@ -244,51 +244,56 @@ export function calculateChart(
                 if (star) {
                     mainStars.push(star.vietnameseName);
                     stars.push({
-                        starId,
-                        starName: star.vietnameseName,
-                        type: star.type,
-                        status: getStarStatus(starId, index, element)
+                        starId, starName: star.vietnameseName, type: star.type,
+                        status: getStarStatus(starId, index, chiMonth, lunar.canYear)
                     });
                 }
             });
         }
         
-        // An sao phụ
-        const supportStarIds = getSupportStars(index, lunar.month, hour);
+        const tuHoaStars = [
+            { id: 'lien_trinh', index: tuHoa.lien_trinh },
+            { id: 'pha_quan', index: tuHoa.pha_quan },
+            { id: 'thai_duong', index: tuHoa.thai_duong },
+            { id: 'vu_khuc', index: tuHoa.vu_khuc }
+        ];
+        
+        tuHoaStars.forEach(({ id, index: thIndex }) => {
+            if (index === thIndex) {
+                const star = STAR_BY_ID[id];
+                if (star && !stars.find(s => s.starId === id)) {
+                    stars.push({
+                        starId: id, starName: star.vietnameseName, type: star.type,
+                        status: getStarStatus(id, index, chiMonth, lunar.canYear)
+                    });
+                }
+            }
+        });
+        
+        const supportStarIds = getSupportStars(index, lunar.month, hour, menhIndex);
         supportStarIds.forEach(starId => {
             const star = STAR_BY_ID[starId];
-            if (star) {
+            if (star && !stars.find(s => s.starId === starId)) {
                 supportStars.push(star.vietnameseName);
                 stars.push({
-                    starId,
-                    starName: star.vietnameseName,
-                    type: star.type,
-                    status: getStarStatus(starId, index, element)
+                    starId, starName: star.vietnameseName, type: star.type,
+                    status: getStarStatus(starId, index, chiMonth, lunar.canYear)
                 });
             }
         });
         
-        // Xác định trạng thái cung
         let status: 'Miếu' | 'Vượng' | 'Đắc Địa' | 'Hãm Địa' | 'Bình' = 'Bình';
         if (stars.some(s => s.status === 'Miếu')) status = 'Miếu';
         else if (stars.some(s => s.status === 'Vượng')) status = 'Vượng';
         else if (stars.some(s => s.status === 'Đắc Địa')) status = 'Đắc Địa';
         else if (stars.some(s => s.status === 'Hãm Địa')) status = 'Hãm Địa';
         
-        (chart as any)[palaceId] = {
-            main_stars: mainStars,
-            support_stars: supportStars,
-            status,
-            stars
-        };
+        (chart as any)[palaceId] = { main_stars: mainStars, support_stars: supportStars, status, stars };
     });
     
     return chart as ChartData;
 }
 
-/**
- * Helper: Tính mệnh từ năm
- */
 function getMenhFromYear(year: number): string {
     const canIndex = (year + 6) % 10;
     const chiIndex = (year + 8) % 12;
@@ -299,14 +304,6 @@ function getMenhFromYear(year: number): string {
     let sum = valCan + valChi;
     if (sum > 5) sum -= 5;
     
-    const MENH: Record<number, string> = {
-        1: 'Kim',
-        2: 'Thủy',
-        3: 'Hỏa',
-        4: 'Thổ',
-        5: 'Mộc'
-    };
-    
+    const MENH: Record<number, string> = { 1: 'Kim', 2: 'Thủy', 3: 'Hỏa', 4: 'Thổ', 5: 'Mộc' };
     return MENH[sum] || 'Chưa xác định';
 }
-
