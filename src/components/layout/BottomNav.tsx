@@ -10,7 +10,6 @@ const BottomNav: React.FC = () => {
   const tabs = [
     { id: 'home', label: 'Home', icon: 'home', href: '/' },
     { id: 'chart', label: 'Tử vi', icon: 'auto_awesome', href: '/tu-vi' },
-    { id: 'tarot', label: 'Tarot', icon: 'style', href: '/tarot' },
     { id: 'zodiac', label: 'Cung mệnh', icon: 'nightlight', href: '/cung-hoang-dao' },
     { id: 'compatibility', label: 'Tương hợp', icon: 'favorite', href: '/tuong-hop' },
   ];

@@ -4,7 +4,7 @@ import { ChartData, PALACE_IDS } from '@/lib/tuvi/chart-calculation';
 import { STAR_BY_ID } from '@/data/tuvi-stars';
 import { supabase, InterpretationRow } from '@/lib/supabase';
 
-const ai = new GoogleGenAI({});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 function createPrompt(chartData: ChartData, palaceId: string, fullName: string): string {
     const palaceNames: Record<string, string> = {
@@ -128,38 +128,30 @@ export async function POST(request: NextRequest) {
                    undefined;
         const userAgent = request.headers.get('user-agent') || undefined;
 
-        // Create a ReadableStream for streaming response
-        // Note: Gemini API may not support true streaming, so we simulate it by chunking the response
-        const stream = new ReadableStream({
+        // Use Gemini streaming for real-time response
+        const stream = await ai.models.generateContentStream({
+            model: 'gemini-2.5-flash',
+            contents: fullPrompt,
+            config: {
+                temperature: 0.9,
+                topP: 0.95,
+                topK: 40,
+            }
+        });
+
+        // Convert Gemini stream to SSE stream
+        const transformStream = new ReadableStream({
             async start(controller) {
                 let fullText = '';
                 try {
-                    // Generate content
-                    const response = await ai.models.generateContent({
-                        model: 'gemini-2.5-flash',
-                        contents: fullPrompt,
-                    });
-
-                    fullText = response.text || '';
-                    
-                    // Simulate streaming by sending chunks
-                    // Split into words and send progressively for better UX
-                    const words = fullText.split(/(\s+)/);
-                    let currentChunk = '';
-                    const chunkSize = 5; // Send 5 words at a time
-                    
-                    for (let i = 0; i < words.length; i++) {
-                        currentChunk += words[i];
-                        
-                        if (i % chunkSize === 0 || i === words.length - 1) {
-                            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text: currentChunk })}\n\n`));
-                            currentChunk = '';
-                            
-                            // Small delay to simulate real streaming
-                            await new Promise(resolve => setTimeout(resolve, 50));
+                    for await (const chunk of stream) {
+                        const text = chunk.text || '';
+                        if (text) {
+                            fullText += text;
+                            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ text })}\n\n`));
                         }
                     }
-
+                    
                     // Send completion signal
                     controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ done: true })}\n\n`));
                     controller.close();
@@ -220,8 +212,13 @@ export async function POST(request: NextRequest) {
                         }
                     }
                 } catch (error: any) {
-                    controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: error.message })}\n\n`));
-                    controller.close();
+                    // Only send error if stream is still open
+                    try {
+                        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ error: error.message })}\n\n`));
+                        controller.close();
+                    } catch (e) {
+                        // Stream already closed, ignore
+                    }
 
                     // Lưu lỗi vào database
                     if (supabase) {
@@ -259,7 +256,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        return new Response(stream, {
+        return new Response(transformStream, {
             headers: {
                 'Content-Type': 'text/event-stream',
                 'Cache-Control': 'no-cache',

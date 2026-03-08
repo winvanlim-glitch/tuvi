@@ -60,7 +60,11 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
     const [aiError, setAiError] = useState<string | null>(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [showAIModal, setShowAIModal] = useState(false);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [isCancelled, setIsCancelled] = useState(false);
     const contentRef = React.useRef<HTMLDivElement>(null);
+    const abortControllerRef = React.useRef<AbortController | null>(null);
+    const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Handle scroll to show/hide scroll to top button
     React.useEffect(() => {
@@ -75,6 +79,18 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
             contentElement.addEventListener('scroll', handleScroll);
             return () => contentElement.removeEventListener('scroll', handleScroll);
         }
+    }, []);
+
+    // Cleanup on unmount
+    React.useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
     }, []);
 
     const scrollToTop = () => {
@@ -106,15 +122,35 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
         setIsLoadingAI(true);
         setIsStreaming(true);
         setAiError(null);
-        setAiInterpretation(''); // Reset để bắt đầu streaming
+        setAiInterpretation('');
+        setIsCancelled(false);
+        setElapsedTime(0);
+
+        // Start elapsed time counter
+        timerRef.current = setInterval(() => {
+            setElapsedTime(prev => prev + 1);
+        }, 1000);
+
+        // Set timeout (60 seconds)
+        const timeoutId = setTimeout(() => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+                setAiError('Yêu cầu mất quá lâu. Vui lòng thử lại hoặc chọn cung khác.');
+                setIsLoadingAI(false);
+                setIsStreaming(false);
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                }
+            }
+        }, 60000);
+
+        // Create abort controller for cancellation
+        abortControllerRef.current = new AbortController();
 
         try {
-            // Tạo sessionId từ fullName và timestamp để group các requests cùng user
             const sessionId = fullName ? `${fullName}_${Date.now()}` : undefined;
-            
-            // Parse birthDate và birthTime từ dob và tob
             const birthDate = dob || null;
-            const birthTime = tob ? `${tob}:00` : null; // Format: HH:mm:ss
+            const birthTime = tob ? `${tob}:00` : null;
             
             const response = await fetch('/api/interpret/stream', {
                 method: 'POST',
@@ -132,6 +168,7 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
                     usagePurpose: `Luận giải cung ${palace.name}`,
                     sessionId,
                 }),
+                signal: abortControllerRef.current.signal,
             });
 
             if (!response.ok) {
@@ -149,9 +186,13 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
             while (true) {
                 const { done, value } = await reader.read();
                 
-                if (done) {
+                if (done || isCancelled) {
                     setIsStreaming(false);
                     setIsLoadingAI(false);
+                    if (timerRef.current) {
+                        clearInterval(timerRef.current);
+                    }
+                    clearTimeout(timeoutId);
                     break;
                 }
 
@@ -171,7 +212,6 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
                             if (data.text) {
                                 setAiInterpretation(prev => {
                                     const newText = (prev || '') + data.text;
-                                    // Save to cache as we stream
                                     const cacheKey = getCacheKey();
                                     if (cacheKey) {
                                         try {
@@ -187,20 +227,43 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
                             if (data.done) {
                                 setIsStreaming(false);
                                 setIsLoadingAI(false);
-                                // Open AI modal when done
+                                if (timerRef.current) {
+                                    clearInterval(timerRef.current);
+                                }
+                                clearTimeout(timeoutId);
                                 setShowAIModal(true);
                             }
                         } catch (e) {
-                            // Skip invalid JSON
                         }
                     }
                 }
             }
         } catch (error: any) {
-            setAiError(error.message || 'Có lỗi xảy ra khi tạo luận giải AI');
+            if (error.name === 'AbortError') {
+                setAiError('Đã hủy yêu cầu');
+            } else {
+                setAiError(error.message || 'Có lỗi xảy ra khi tạo luận giải AI');
+            }
             setIsLoadingAI(false);
             setIsStreaming(false);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+            clearTimeout(timeoutId);
         }
+    };
+
+    const handleCancel = () => {
+        setIsCancelled(true);
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+        setIsLoadingAI(false);
+        setIsStreaming(false);
+        setAiError(null);
     };
 
     return (
@@ -299,11 +362,30 @@ const PalaceDetailModal: React.FC<PalaceDetailModalProps> = ({
                                                 >
                                                     auto_awesome
                                                 </motion.span>
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <span className="text-base sm:text-lg">Đang tạo luận giải AI...</span>
-                                                    {isStreaming && (
-                                                        <span className="text-xs text-primary/70">Đang xử lý nội dung</span>
-                                                    )}
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span className="text-base sm:text-lg">
+                                                        {isCancelled ? 'Đang hủy...' : 'Đang tạo luận giải AI...'}
+                                                    </span>
+                                                    <div className="flex items-center gap-3">
+                                                        {isStreaming && (
+                                                            <span className="text-xs text-primary/70">
+                                                                {elapsedTime > 0 
+                                                                    ? `⏱️ ${Math.floor(elapsedTime / 60)}:${(elapsedTime % 60).toString().padStart(2, '0')}`
+                                                                    : 'Đang xử lý nội dung'}
+                                                            </span>
+                                                        )}
+                                                        {!isCancelled && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleCancel();
+                                                                }}
+                                                                className="px-3 py-1 text-xs rounded-full bg-red-500/20 hover:bg-red-500/40 border border-red-500/40 transition-colors"
+                                                            >
+                                                                Hủy
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                                 {isStreaming && (
                                                     <motion.div

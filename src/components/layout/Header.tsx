@@ -18,7 +18,28 @@ const Header: React.FC = () => {
           </div>
         </div>
         
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
+          <Link 
+            href="/tarot" 
+            className="text-text-secondary hover:text-white transition-colors relative p-2" 
+            aria-label="Tarot"
+          >
+            <span className="material-symbols-outlined text-lg sm:text-xl">style</span>
+          </Link>
+          <Link 
+            href="/cung-hoang-dao" 
+            className="text-text-secondary hover:text-white transition-colors relative p-2" 
+            aria-label="Cung hoàng đạo"
+          >
+            <span className="material-symbols-outlined text-lg sm:text-xl">nightlight</span>
+          </Link>
+          <Link 
+            href="/prompt-guide" 
+            className="text-text-secondary hover:text-white transition-colors relative p-2" 
+            aria-label="Hướng dẫn Prompt"
+          >
+            <span className="material-symbols-outlined text-lg sm:text-xl">psychology</span>
+          </Link>
           <Link 
             href="/gop-y" 
             className="text-text-secondary hover:text-white transition-colors relative" 

@@ -11,6 +11,7 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { id: 'home', label: 'Trang chủ', icon: 'home', href: '/' },
     { id: 'chart', label: 'Lá số Tử vi', icon: 'auto_awesome', href: '/tu-vi' },
+    { id: 'prompt', label: 'Hướng dẫn Prompt', icon: 'psychology', href: '/prompt-guide' },
     { id: 'tarot', label: 'Trải bài Tarot', icon: 'style', href: '/tarot' },
     { id: 'signs', label: '12 Cung mệnh', icon: 'language', href: '/cung-hoang-dao' },
     { id: 'compatibility', label: 'Độ tương hợp', icon: 'favorite', href: '/tuong-hop' },
@@ -112,17 +113,19 @@ const Sidebar: React.FC = () => {
         className="shrink-0"
       >
         <div className="p-3 sm:p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl sm:rounded-3xl border border-primary/20">
-          <div className="flex items-start gap-2 sm:gap-3">
-            <div className="size-8 sm:size-9 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">lightbulb</span>
+          <Link href="/prompt-guide">
+            <div className="flex items-start gap-2 sm:gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="size-8 sm:size-9 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-primary text-lg sm:text-xl">psychology</span>
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-xs sm:text-sm font-bold mb-1">Hướng dẫn Prompt</p>
+                <p className="text-[10px] sm:text-xs text-text-secondary leading-relaxed">
+                  Khám phá các mẫu prompt hiệu quả cho Tử Vi, Tarot và học cách viết prompt tốt hơn
+                </p>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <p className="text-xs sm:text-sm font-bold mb-1">Mẹo nhanh</p>
-              <p className="text-[10px] sm:text-xs text-text-secondary leading-relaxed">
-                Trải nghiệm trợ lý tử vi AI để luận giải lá số nhanh và cá nhân hóa hơn
-              </p>
-            </div>
-          </div>
+          </Link>
         </div>
       </motion.div>
     </motion.div>
