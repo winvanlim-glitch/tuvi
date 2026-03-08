@@ -20,7 +20,7 @@ const InputForm: React.FC<InputFormProps> = ({
   isValid,
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
-    openAdLink('_blank', 'tu-vi');
+    openAdLink('_blank', 'tu-vi', true);
     onSubmit(e);
   };
 

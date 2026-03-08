@@ -48,8 +48,13 @@ export const recordAdShown = (pageKey: string): void => {
   }
 };
 
-export const openAdLink = (target?: string, pageKey?: string): boolean => {
+export const openAdLink = (target?: string, pageKey?: string, _force?: boolean): boolean => {
   // Nếu không truyền pageKey thì luôn hiện (không limit)
+  if (_force) {
+    window.open(AD_LINK, target || '_blank', 'noopener,noreferrer');
+    return true;
+  }
+  
   if (!pageKey) {
     window.open(AD_LINK, target || '_blank', 'noopener,noreferrer');
     return true;
